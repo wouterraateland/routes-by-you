@@ -41,7 +41,7 @@ export default function ImageInput({
   );
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex flex-wrap items-center space-x-4">
       <label
         ref={containerRef}
         className={cx(

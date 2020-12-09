@@ -38,7 +38,7 @@ export default function Profile() {
 
   return (
     <Shell>
-      <div className="flex flex-col h-screen items-center justify-center space-y-4">
+      <div className="mx-auto max-w-xl p-4 space-y-4">
         {error ? (
           <p className="px-4 py-2 rounded-md bg-red-100 text-red-600">
             {error}

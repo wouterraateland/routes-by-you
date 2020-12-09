@@ -23,25 +23,27 @@ export default function Shell({ children }) {
   const { pathname } = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {children}
-      <nav className="absolute bottom-0 left-0 right-0 pb-safe pl-safe pr-safe bg-white border-t border-gray-100">
-        <div className="flex items-center justify-around">
-          {tabs.map(({ href, Icon, label }) => (
-            <Link href={href} key={href}>
-              <a
-                className={cx(
-                  "flex-grow flex flex-col sm:flex-row items-center justify-center p-2 space-y-1 sm:space-y-0 sm:space-x-2",
-                  { "text-blue-600": pathname === href }
-                )}
-              >
-                <Icon className="h-6 stroke-current stroke-3" />
-                <span className="text-xs opacity-75">{label}</span>
-              </a>
-            </Link>
-          ))}
-        </div>
-      </nav>
+    <div className="flex flex-col min-h-screen sm:flex-col-reverse bg-gray-50">
+      <div className="w-full flex-grow">{children}</div>
+      <div className="sticky bottom-0 sm:top-0 sm:bottom-auto left-0 right-0">
+        <nav className="max-w-2xl mx-auto pb-safe pl-safe pr-safe sm:rounded-b-md shadow-md bg-white border-t border-gray-100">
+          <div className="flex items-center justify-around">
+            {tabs.map(({ href, Icon, label }) => (
+              <Link href={href} key={href}>
+                <a
+                  className={cx(
+                    "flex-grow flex flex-col sm:flex-row items-center justify-center p-2 space-y-1 sm:space-y-0 sm:space-x-2",
+                    { "text-blue-600": pathname === href }
+                  )}
+                >
+                  <Icon className="h-6 stroke-current stroke-3" />
+                  <span className="text-xs opacity-75">{label}</span>
+                </a>
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </div>
     </div>
   );
 }
