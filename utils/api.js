@@ -29,6 +29,10 @@ export class Api {
   async put(url, params) {
     return await this.request(url, { ...params, method: "PUT" });
   }
+
+  async delete(url, params) {
+    return await this.request(url, { ...params, method: "DELETE" });
+  }
 }
 
 export const api = new Api();

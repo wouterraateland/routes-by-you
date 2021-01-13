@@ -1,7 +1,7 @@
 import { supabase } from "utils/supabase";
 
+import Repeat from "components/icons/Repeat";
 import Flash from "components/icons/Flash";
-import Plus from "components/icons/Plus";
 import Card from "components/ui/Card";
 import Shell from "components/Shell";
 import Route from "components/Route";
@@ -18,14 +18,14 @@ export default function UserPage({ user }) {
           <h1 className="text-xl font-bold">{user.display_name}</h1>
           <div className="flex items-center justify-center space-x-4">
             <Card className="flex items-center space-x-2 p-4">
-              <Plus className="h-4" />
+              <Flash className="h-4" />
               <p>
                 Set {user.routes.length} route
                 {user.routes.length === 1 ? "" : "s"}
               </p>
             </Card>
             <Card className="flex items-center space-x-2 p-4">
-              <Flash filled className="h-4" />
+              <Repeat className="h-4" />
               <p>
                 Climbed {user.repeats.length} route
                 {user.repeats.length === 1 ? "" : "s"}

@@ -1,16 +1,17 @@
+import { redirectIfAuthenticated } from "utils/auth";
 import { supabase } from "utils/supabase";
 
 import { useState } from "react";
-import useAuthRedirect from "hooks/useAuthRedirect";
+import useAuth from "hooks/useAuth";
 
 import Link from "next/link";
 import Button from "components/ui/Button";
 import Card from "components/ui/Card";
-
-const isAuthenticated = ({ user }) => !!user;
+import Input from "components/ui/Input";
+import Field from "components/ui/Field";
 
 export default function Login() {
-  useAuthRedirect(isAuthenticated, "/dashboard");
+  useAuth((auth) => redirectIfAuthenticated(auth, "/dashboard"));
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,28 +55,26 @@ export default function Login() {
                 {error}
               </p>
             )}
-            <label className="block">
-              <span className="block text-xs">Email</span>
-              <input
+            <Field label="Email">
+              <Input
                 required
-                className="w-full border border-gray-300 rounded-md flex-grow px-4 py-2 bg-gray-50"
+                className="w-full bg-gray-50"
                 type="email"
                 placeholder="Your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </label>
+            </Field>
             <div>
-              <label className="block">
-                <span className="block text-xs">Password</span>
-                <input
-                  className="w-full border border-gray-300 rounded-md flex-grow px-4 py-2 bg-gray-50"
+              <Field label="Password">
+                <Input
+                  className="w-full bg-gray-50"
                   type="password"
                   placeholder="Your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-              </label>
+              </Field>
               <div className="flex justify-end">
                 <button
                   type="button"

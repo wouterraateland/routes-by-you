@@ -14,7 +14,7 @@ export function redirectIfNotAuthenticated(auth, to = "/auth/login") {
   }
 }
 
-export function redirectIfAuthenticated(auth, to = "/admin") {
+export function redirectIfAuthenticated(auth, to = "/dashboard") {
   if (auth.user) {
     throw new RedirectError(to);
   }
