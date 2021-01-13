@@ -15,6 +15,7 @@ export default async (req, res) => {
       ? null
       : between(100, 1000)(req.body.grade),
     rating: isNothing(req.body.rating) ? null : between(0, 5)(req.body.rating),
+    video: req.body.video,
   };
 
   const repeatId = req.body.id;

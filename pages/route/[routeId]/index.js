@@ -1,17 +1,25 @@
 import cx from "classnames";
-import { pointsToFont, pointsToHsl } from "utils/grades";
 import { formatDistanceToNow } from "date-fns";
+
+import { supabase } from "utils/supabase";
+import { pointsToFont, pointsToHsl } from "utils/grades";
+
+import { useRouter } from "next/router";
+import useResource from "hooks/useResource";
 
 import { authResource } from "resources/AuthResource";
 
-import useResource from "hooks/useResource";
-
 import Link from "next/link";
-import Repeat from "components/icons/Repeat";
+import Cross from "components/icons/Cross";
 import Camera from "components/icons/Camera";
+import Repeat from "components/icons/Repeat";
 import StarRating from "components/StarRating";
+import Button from "components/ui/Button";
+import RepeatThumb from "components/RepeatThumb";
 
-export default function Route({ route }) {
+export default function RepeatRoute({ route }) {
+  const router = useRouter();
+
   const { user } = useResource(authResource);
 
   const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
@@ -27,11 +35,17 @@ export default function Route({ route }) {
   const repeatsWithVideo = route.repeats.filter((repeat) => repeat.video);
 
   return (
-    <Link href={`/route/${route.id}`}>
-      <a className="block">
+    <div className="min-h-screen bg-gray-50">
+      <div className="sm:py-4 max-w-xl mx-auto">
         <div className="pb-4 sm:pb-0 sm:rounded-md sm:shadow-md bg-white">
           <div className="flex items-center justify-between p-2">
             <div className="flex items-center space-x-4">
+              <Button
+                className="p-2 rounded-md hover:bg-gray-100"
+                onClick={() => router.back()}
+              >
+                <Cross className="h-4" direction="left" />
+              </Button>
               <Link href={`/user/${route.setter.id}`}>
                 <a>
                   <img
@@ -71,7 +85,7 @@ export default function Route({ route }) {
             </p>
           </div>
           <img className="w-full" src={route.image} />
-          <div className="p-2">
+          <div className="p-2 sm:px-4">
             <div className="flex items-start justify-between space-x-2">
               <div>
                 <h2 className="text-2xl font-black">{route.name}</h2>
@@ -101,13 +115,14 @@ export default function Route({ route }) {
               <Link href={`/route/${route.id}/repeat`}>
                 <a
                   className={cx(
-                    "my-1 p-2 rounded-md",
+                    "flex space-x-2 my-1 p-2 rounded-md",
                     repeated
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "hover:bg-gray-100 text-gray-500"
+                      ? "bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                      : "border hover:bg-gray-100 text-gray-500 font-bold"
                   )}
                 >
                   <Repeat className="h-6" />
+                  <span>Sent it</span>
                 </a>
               </Link>
             </div>
@@ -116,8 +131,41 @@ export default function Route({ route }) {
               {formatDistanceToNow(new Date(route.created_at))} ago
             </p>
           </div>
+          <div>
+            {route.repeats.map((repeat) => (
+              <RepeatThumb key={repeat.id} repeat={repeat} />
+            ))}
+          </div>
         </div>
-      </a>
-    </Link>
+      </div>
+    </div>
   );
+}
+
+export async function getServerSideProps({ params }) {
+  const { routeId } = params;
+
+  const { data: route, error } = await supabase
+    .from("routes")
+    .select(
+      `
+        *,
+        setter: setter_id (*),
+        repeats (
+          *,
+          user:user_id (*)
+        ),
+        location: location_id (*),
+        location_string,
+        comments: route_comments (*)
+      `
+    )
+    .eq("id", routeId)
+    .single();
+  if (error) {
+    console.error(error);
+    return { notFound: true };
+  }
+
+  return { props: { route } };
 }

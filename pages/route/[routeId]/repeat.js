@@ -10,6 +10,7 @@ import useAuth from "hooks/useAuth";
 import Cross from "components/icons/Cross";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
+import Input from "components/ui/Input";
 import StarRating from "components/StarRating";
 
 export default function RepeatRoute({ route }) {
@@ -25,6 +26,7 @@ export default function RepeatRoute({ route }) {
       route_id: routeId,
       grade: null,
       rating: null,
+      video: null,
       attempt: 1,
     }
   );
@@ -116,6 +118,21 @@ export default function RepeatRoute({ route }) {
               />
             </div>
           </div>
+          <Field
+            label="Link to video"
+            hint="Youtube, Instagram, etc."
+            className="max-w-sm mx-auto"
+          >
+            <Input
+              value={repeat.video || ""}
+              onChange={(event) =>
+                setRepeat((repeat) => ({
+                  ...repeat,
+                  video: event.target.value || null,
+                }))
+              }
+            />
+          </Field>
           {repeat.id && (
             <div className="flex justify-center pt-4">
               <Button
