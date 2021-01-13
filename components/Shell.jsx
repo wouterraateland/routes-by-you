@@ -3,14 +3,12 @@ import { useRouter } from "next/router";
 import useAuthRedirect from "hooks/useAuthRedirect";
 
 import Link from "next/link";
-import Calendar from "components/icons/Calendar";
 import Home from "components/icons/Home";
 import Person from "components/icons/Person";
 import Plus from "components/icons/Plus";
 
 const tabs = [
   { href: "/dashboard", Icon: Home, label: "Home" },
-  { href: "/comps", Icon: Calendar, label: "Comps" },
   { href: "/profile", Icon: Person, label: "Profile" },
   { href: "/new", Icon: Plus, label: "New" },
 ];
@@ -36,7 +34,7 @@ export default function Shell({ children }) {
                     { "text-blue-600": pathname === href }
                   )}
                 >
-                  <Icon className="h-6 stroke-current stroke-3" />
+                  <Icon className="h-6" filled={pathname === href} />
                   <span className="text-xs opacity-75">{label}</span>
                 </a>
               </Link>

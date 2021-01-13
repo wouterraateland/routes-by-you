@@ -1,4 +1,3 @@
-import React from "react";
 import Icon from "./Icon";
 
 const getTransform = (direction) => {
@@ -14,14 +13,14 @@ const getTransform = (direction) => {
   }
 };
 
-const Arrow = ({ direction, ...props }) => (
-  <Icon
-    viewBox="0 0 32 32"
-    style={{ transform: getTransform(direction) }}
-    {...props}
-  >
-    <path d="M4 16h24M16 4l12 12-12 12" fill="none" />
-  </Icon>
-);
-
-export default Arrow;
+export default function Arrow({ direction, ...props }) {
+  return (
+    <Icon
+      viewBox="0 0 32 32"
+      style={{ transform: getTransform(direction) }}
+      {...props}
+    >
+      <path d="M4 16h24M16 4l12 12-12 12" fill="none" />
+    </Icon>
+  );
+}

@@ -1,3 +1,4 @@
+import cx from "classnames";
 import { pointsToFont, pointsToHsl } from "utils/grades";
 import { formatDistanceToNow } from "date-fns";
 
@@ -7,8 +8,8 @@ import useResource from "hooks/useResource";
 
 import Link from "next/link";
 import Flash from "components/icons/Flash";
-import FlashFilled from "components/icons/FlashFilled";
 import StarRating from "components/StarRating";
+import Comment from "./icons/Comment";
 
 export default function Route({ route }) {
   const { user } = useResource(authResource);
@@ -66,21 +67,32 @@ export default function Route({ route }) {
             {route.repeats.length > 0 ? (
               <div className="flex space-x-2 items-center text-gray-500 text-sm">
                 <span>{route.repeats.length} repeats</span>
-                <StarRating rating={avgRating} />
+                {repeatsWithRating.length > 0 && (
+                  <StarRating rating={avgRating} />
+                )}
               </div>
             ) : (
               <p className="text-gray-500 text-sm">Not repeated yet</p>
             )}
           </div>
-          <Link href={`/route/${route.id}/repeat`}>
-            <a>
-              {repeated ? (
-                <FlashFilled className="my-1 w-10 h-10 stroke-current fill-current stroke-2 text-red-600" />
-              ) : (
-                <Flash className="my-1 w-10 h-10 stroke-current stroke-2 text-gray-500" />
-              )}
-            </a>
-          </Link>
+          <div className="flex space-x-2 my-2">
+            <Link href={`/route/${route.id}/comment`}>
+              <a>
+                <Comment className="h-6 text-gray-500" />
+              </a>
+            </Link>
+            <Link href={`/route/${route.id}/repeat`}>
+              <a>
+                <Flash
+                  filled={repeated}
+                  className={cx(
+                    "h-6",
+                    repeated ? "text-red-600" : "text-gray-500"
+                  )}
+                />
+              </a>
+            </Link>
+          </div>
         </div>
         {route.description && <p className="py-2">{route.description}</p>}
         <p className="text-xs text-gray-400 uppercase">

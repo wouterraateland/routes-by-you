@@ -1,6 +1,6 @@
 import cx from "classnames";
 
-import React from "react";
+
 import Icon from "./Icon";
 
 const Bunq = ({ className, ...props }) => (
@@ -22,6 +22,4 @@ const Bunq = ({ className, ...props }) => (
     <path fill="#f28825" d="M100 0h20v120h-20z" />
     <path fill="#f5c836" d="M110 0h10v120h-10z" />
   </Icon>
-);
-
-export default Bunq;
+);}

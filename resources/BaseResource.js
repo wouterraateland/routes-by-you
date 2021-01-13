@@ -4,6 +4,10 @@ export default class BaseResource {
   error = undefined;
   promise = null;
 
+  getData() {
+    return this.data;
+  }
+
   read() {
     switch (this.status) {
       case "pending":
@@ -11,7 +15,7 @@ export default class BaseResource {
       case "error":
         throw this.error;
       default:
-        return this.data;
+        return this.getData();
     }
   }
 }

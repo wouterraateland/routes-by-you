@@ -1,10 +1,9 @@
-import React from "react";
 import Icon from "./Icon";
 
-const Min = (props) => (
-  <Icon viewBox="0 0 32 32" {...props}>
-    <path d="M4 16h24" fill="none" />
-  </Icon>
-);
-
-export default Min;
+export default function Min(props) {
+  return (
+    <Icon viewBox="0 0 32 32" {...props}>
+      <path d="M4 16h24" fill="none" />
+    </Icon>
+  );
+}

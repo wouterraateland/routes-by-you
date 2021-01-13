@@ -1,73 +1,46 @@
 import { between } from "utils/math";
 import cx from "classnames";
 
-import { forwardRef, useCallback, useLayoutEffect, useRef } from "react";
-import useClickOutside from "hooks/useClickOutside";
-import useCSSTransition from "hooks/useCSSTransition";
-import useUpstreamState from "hooks/useUpstreamState";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import Modal from "containers/Modal";
 
 const MARGIN = 8;
 
-const toRect = (el) => {
-  const rect = el?.getBoundingClientRect();
+const toRect = (el) =>
+  el?.getBoundingClientRect() || {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  };
 
-  return rect
-    ? {
-        top: rect.top,
-        left: rect.left,
-        bottom: rect.bottom,
-        right: rect.right,
-        centerX: rect.x + rect.width / 2,
-        centerY: rect.y + rect.height / 2,
-      }
-    : {
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        centerX: 0,
-        centerY: 0,
-      };
-};
+export default function FlyOut({
+  direction = "vertical",
+  persistOnClick,
+  originNode,
+  originRef,
+  isOpen,
+  defaultOpen = false,
+  onClose,
+  children,
+  className,
+}) {
+  const controlled =
+    typeof isOpen !== "undefined" && typeof onClose !== "undefined";
+  if ((typeof isOpen === "undefined") !== (typeof onClose === "undefined")) {
+    throw Error("Controlled component should specify onClose");
+  }
+  const origin = originRef?.current || originNode;
 
-export default forwardRef(function FlyOut(
-  {
-    direction = "vertical",
-    persistOnClick,
-    originRef,
-    isOpen,
-    onClose,
-    children,
-    className,
-    disabled,
-    ...props
-  },
-  ref
-) {
-  const [isVisible, setVisibility] = useUpstreamState(isOpen || false);
-  const containerRef = useCSSTransition(isVisible, {
-    timeout: 200,
-    appear: true,
-    ref,
-  });
-  const itemsRef = useRef(null);
+  const [visible, setVisibility] = useState(defaultOpen);
+  const containerRef = useRef(null);
 
   const render = useCallback(() => {
-    const origin = originRef?.current;
     const originRect = toRect(origin);
     const container = containerRef.current;
-    const items = itemsRef.current;
 
-    if (
-      origin &&
-      originRect &&
-      container &&
-      items &&
-      typeof window !== "undefined"
-    ) {
-      container.style.minWidth = `${origin.offsetWidth}px`;
+    if (origin && originRect && container && typeof window !== "undefined") {
       const wWidth = window.innerWidth;
       const wHeight = window.innerHeight;
       const width = container.offsetWidth;
@@ -75,11 +48,11 @@ export default forwardRef(function FlyOut(
 
       const _direction =
         direction === "vertical"
-          ? originRect.centerY < wHeight / 2
+          ? originRect.top + originRect.height / 2 < wHeight / 2
             ? "bottom"
             : "top"
           : direction === "horizontal"
-          ? originRect.centerX < wWidth / 2
+          ? originRect.left + originRect.width / 2 < wWidth / 2
             ? "right"
             : "left"
           : direction;
@@ -89,41 +62,19 @@ export default forwardRef(function FlyOut(
           ? originRect.bottom + MARGIN
           : _direction === "top"
           ? Math.max(MARGIN, originRect.top - (height + MARGIN))
-          : between(
-              MARGIN,
-              wHeight - (height + MARGIN)
-            )(originRect.centerY - height / 2);
+          : between(MARGIN, wHeight - (height + MARGIN))(originRect.top);
       const cLeft =
         _direction === "left"
           ? Math.max(MARGIN, originRect.left - (width + MARGIN))
           : _direction === "right"
           ? originRect.right + MARGIN
-          : between(
-              MARGIN,
-              wWidth - (width + MARGIN)
-            )(originRect.centerX - width / 2);
-
-      const transformOrigin = {
-        top:
-          (_direction === "top"
-            ? originRect.top
-            : _direction === "bottom"
-            ? originRect.bottom
-            : originRect.centerY) - cTop,
-        left:
-          (_direction === "left"
-            ? originRect.left
-            : _direction === "right"
-            ? originRect.right
-            : originRect.centerX) - cLeft,
-      };
+          : between(MARGIN, wWidth - (width + MARGIN))(originRect.left);
 
       container.style.maxWidth = `${wWidth - 16}px`;
       container.style.top = `${cTop}px`;
       container.style.left = `${cLeft}px`;
-      container.style.transformOrigin = `${transformOrigin.left}px ${transformOrigin.top}px`;
 
-      items.style.maxHeight = `${
+      container.style.maxHeight = `${
         (_direction === "top"
           ? originRect.top
           : _direction === "bottom"
@@ -132,61 +83,49 @@ export default forwardRef(function FlyOut(
         MARGIN * 2
       }px`;
     }
-  }, [originRef, containerRef, direction]);
+  }, [origin, direction]);
 
-  useLayoutEffect(() => {
-    const show = () => setVisibility(true);
-
-    const origin = originRef?.current;
-
-    if (origin && typeof window !== "undefined") {
-      !onClose && origin.addEventListener("click", show);
-      window.addEventListener("mousewheel", render);
-      window.addEventListener("resize", render);
+  useEffect(() => {
+    if (origin && !controlled) {
+      const show = () => {
+        render();
+        setVisibility(true);
+      };
+      origin.addEventListener("click", show);
 
       return () => {
-        !onClose && origin.removeEventListener("click", show);
-        window.removeEventListener("mousewheel", render);
-        window.removeEventListener("resize", render);
+        origin.removeEventListener("click", show);
       };
     }
-  }, [render, onClose, originRef, setVisibility]);
+  }, [controlled, origin]);
 
-  useLayoutEffect(() => {
-    if (isVisible) {
-      render();
+  useEffect(() => {
+    render();
+    if (controlled) {
+      setVisibility(isOpen);
     }
-  }, [isVisible, children, render]);
+  }, [controlled, isOpen, children, render]);
 
-  const close = (event) => {
-    event && event.stopPropagation();
-    onClose ? onClose() : setVisibility(false);
-  };
-
-  useClickOutside(
-    containerRef,
-    isOpen ? onClose || (() => setVisibility(false)) : () => {}
-  );
+  const close = controlled
+    ? onClose
+    : (event) => {
+        event.stopPropagation();
+        setVisibility(false);
+      };
 
   return (
-    <Modal isOpen={isVisible && !disabled} onClose={close}>
+    <Modal isOpen={isOpen || visible} onClose={close}>
       <div
-        ref={containerRef}
-        {...props}
         className={cx(
-          "fixed rounded-md shadow-md bg-white",
-          isVisible ? "opacity-100" : "opacity-0",
+          "fixed rounded-md shadow-md bg-white overflow-y-auto",
+          { "opacity-0": !visible },
           className
         )}
+        ref={containerRef}
+        onClick={persistOnClick ? undefined : close}
       >
-        <div
-          className="py-2 overflow-y-auto"
-          ref={itemsRef}
-          onClick={persistOnClick ? (event) => event.stopPropagation() : close}
-        >
-          {children}
-        </div>
+        {children}
       </div>
     </Modal>
   );
-});
+}

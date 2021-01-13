@@ -17,13 +17,14 @@ const cleanUrl = (s, removePath) =>
     () => {
       const url = new URL(s);
       const host = url.host.replace("www.", "");
-      return removePath ? host : `${host}${url.pathname}`;
+      return removePath ? host : `${host}${url.pathname.replace(/\/$/g, "")}`;
     },
     () =>
       (s || "")
         .replace("http://", "")
         .replace("https://", "")
         .replace("www.", "")
+        .replace(/\/$/g, "")
   );
 
 const concatSentence = (items, connective) =>

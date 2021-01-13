@@ -7,6 +7,8 @@ import useResource from "hooks/useResource";
 import Shell from "components/Shell";
 import Button from "components/ui/Button";
 import ImageInput from "components/ui/ImageInput";
+import Input from "components/ui/Input";
+import Field from "components/ui/Field";
 
 export default function Profile() {
   const { user } = useResource(authResource);
@@ -38,7 +40,7 @@ export default function Profile() {
 
   return (
     <Shell>
-      <div className="mx-auto max-w-xl p-4 space-y-4">
+      <div className="max-w-xl mx-auto p-4 space-y-4">
         {error ? (
           <p className="px-4 py-2 rounded-md bg-red-100 text-red-600">
             {error}
@@ -48,11 +50,11 @@ export default function Profile() {
         ) : (
           <>
             <form
-              className="w-full max-w-sm space-y-2"
+              className="w-full max-w-sm space-y-2 mx-auto"
               onSubmit={updateUserData}
             >
               <ImageInput
-                className="w-48 h-48 object-cover rounded-full bg-gray-100"
+                className="mx-auto w-48 h-48 object-cover rounded-full bg-gray-100"
                 value={userData.avatar}
                 onChange={(avatar) =>
                   setUserData((prev) => ({ ...prev, avatar, touched: true }))
@@ -65,11 +67,10 @@ export default function Profile() {
                   }))
                 }
               />
-              <label className="block">
-                <span className="block text-xs">Display name</span>
-                <input
+              <Field label="Display name">
+                <Input
                   required
-                  className="w-full border border-gray-300 rounded-md flex-grow px-4 py-2 bg-gray-50"
+                  className="w-full"
                   type="text"
                   placeholder="Your name"
                   value={userData.display_name}
@@ -81,7 +82,7 @@ export default function Profile() {
                     }))
                   }
                 />
-              </label>
+              </Field>
               {userData.touched && (
                 <Button
                   className="w-full px-4 py-2 rounded-md text-white font-bold"
@@ -91,14 +92,16 @@ export default function Profile() {
                 </Button>
               )}
             </form>
-            <Button
-              type="button"
-              className="px-4 py-2 rounded-md text-white font-bold"
-              bgColor="red"
-              onClick={() => supabase.auth.signOut()}
-            >
-              Sign out
-            </Button>
+            <div className="text-center">
+              <Button
+                type="button"
+                className="px-4 py-2 rounded-md text-white font-bold"
+                bgColor="red"
+                onClick={() => supabase.auth.signOut()}
+              >
+                Sign out
+              </Button>
+            </div>
           </>
         )}
       </div>

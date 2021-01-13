@@ -1,7 +1,6 @@
-import React from "react";
 import Icon from "./Icon";
 
-const PayPal = (props) => (
+export default function PayPal(props) {
   <Icon viewBox="-2.3 0 30.18 30.18" {...props}>
     <path
       fill="#253B80"
@@ -23,7 +22,5 @@ const PayPal = (props) => (
       stroke="none"
       d="M9.614 7.699a1.169 1.169 0 011.159-.991h7.352c.871 0 1.684.057 2.426.177a9.757 9.757 0 011.481.353c.365.121.704.264 1.017.429.368-2.347-.003-3.945-1.272-5.392C20.378.682 17.853 0 14.622 0h-9.38c-.66 0-1.223.48-1.325 1.133L.01 25.898a.806.806 0 00.795.932h5.791l1.454-9.225 1.564-9.906z"
     />
-  </Icon>
-);
-
-export default PayPal;
+  </Icon>;
+}

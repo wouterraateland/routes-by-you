@@ -1,4 +1,5 @@
-import * as _ from "utils";
+import { appear } from "utils/transitions";
+import { between } from "utils/math";
 import cx from "classnames";
 
 import { useCallback, useEffect, useState } from "react";
@@ -15,10 +16,11 @@ export default function ToolTip({
   className,
   children,
 }) {
-  const [isVisible, setVisibility] = useState(false);
-  const toolTipRef = useCSSTransition(isVisible, {
+  const [visible, setVisibility] = useState(false);
+  const toolTipRef = useCSSTransition(visible, {
     timeout: 200,
     appear: true,
+    classNames: appear,
   });
 
   const setPosition = useCallback(() => {
@@ -54,17 +56,17 @@ export default function ToolTip({
 
       toolTip.style.left = `${
         _direction === "left"
-          ? position.x - (width + MARGIN)
+          ? position.x - (width + rect.width / 2 + MARGIN)
           : _direction === "right"
-          ? position.x + MARGIN
-          : _.between(MARGIN, wWidth - (width + MARGIN))(position.x - width / 2)
+          ? position.x + rect.width / 2 + MARGIN
+          : between(MARGIN, wWidth - (width + MARGIN))(position.x - width / 2)
       }px`;
       toolTip.style.top = `${
         _direction === "bottom"
           ? position.y + MARGIN
           : _direction === "top"
           ? position.y - (height + MARGIN)
-          : _.between(
+          : between(
               MARGIN,
               wHeight - (height + MARGIN)
             )(position.y - height / 2)
@@ -106,7 +108,7 @@ export default function ToolTip({
       <span
         ref={toolTipRef}
         className={cx(
-          "fixed pointer-events-none z-50 block py-2 px-4 rounded-md text-xs text-left bg-black shift-up",
+          "fixed pointer-events-none z-50 block py-1 px-2 rounded-md text-sm text-left bg-gray-900 text-white",
           className
         )}
       >

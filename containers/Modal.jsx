@@ -1,10 +1,10 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export default function Modal({ children, isOpen, onClose }) {
   const [container, setContainer] = useState(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!container) {
       const container = document.createElement("div");
       container.className = "fixed inset-0 z-50";
@@ -12,7 +12,7 @@ export default function Modal({ children, isOpen, onClose }) {
     }
   }, [container]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (container && typeof onClose === "function") {
       const tryClose = (event) => {
         if (event.target === event.currentTarget) {
@@ -26,7 +26,7 @@ export default function Modal({ children, isOpen, onClose }) {
     }
   }, [container, onClose]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (container) {
       if (isOpen) {
         document.body.appendChild(container);
@@ -35,7 +35,7 @@ export default function Modal({ children, isOpen, onClose }) {
     }
   }, [container, isOpen]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (container) {
       return () => {
         if (document.body.contains(container)) {

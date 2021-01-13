@@ -5,7 +5,7 @@ import { forwardRef, useEffect, useRef } from "react";
 const refreshEl = (el) => el.offsetHeight;
 
 export default forwardRef(function Textarea(
-  { className, rows, extraHeight, ...props },
+  { className, rows = 1, extraHeight = 0, ...props },
   ref
 ) {
   const textAreaRef = useRef(null);
@@ -13,9 +13,13 @@ export default forwardRef(function Textarea(
     const textArea = textAreaRef.current;
     if (textArea) {
       textArea.style.height = "0px";
-      const fontSize = parseFloat(
-        window.getComputedStyle(textArea, null).getPropertyValue("font-size")
-      );
+      const fontSizeProperty = window
+        .getComputedStyle(textArea, null)
+        .getPropertyValue("font-size");
+      const fontSize =
+        fontSizeProperty && !isNaN(fontSizeProperty)
+          ? parseFloat(fontSizeProperty)
+          : 14;
 
       refreshEl(textArea);
       textArea.style.height = `${

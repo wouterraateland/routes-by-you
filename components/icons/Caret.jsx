@@ -1,4 +1,3 @@
-import React from "react";
 import Icon from "./Icon";
 
 const getTransform = (direction) => {
@@ -14,14 +13,14 @@ const getTransform = (direction) => {
   }
 };
 
-const Caret = ({ direction, style, ...props }) => (
-  <Icon
-    viewBox="0 0 32 32"
-    style={{ ...style, transform: getTransform(direction) }}
-    {...props}
-  >
-    <path d="M28 10L16 22 4 10" fill="none" />
-  </Icon>
-);
-
-export default Caret;
+export default function Caret({ direction, style, ...props }) {
+  return (
+    <Icon
+      viewBox="0 0 32 32"
+      style={{ ...style, transform: getTransform(direction) }}
+      {...props}
+    >
+      <path d="M28 10L16 22 4 10" fill="none" />
+    </Icon>
+  );
+}
