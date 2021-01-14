@@ -72,7 +72,7 @@ export default function NewRoute() {
         </div>
       </div>
       <div
-        className="flex flex-grow"
+        className="overflow-hidden flex flex-grow touch-noscroll"
         ref={(node) => setContainer(node)}
         {...panZoomHandlers}
       >

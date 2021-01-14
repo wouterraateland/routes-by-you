@@ -9,3 +9,7 @@
 .react-datepicker-wrapper {
   display: block;
 }
+
+.touch-noscroll {
+  -webkit-overflow-scrolling: touch;
+}

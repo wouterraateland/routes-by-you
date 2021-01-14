@@ -248,14 +248,17 @@ export default function usePanZoom({
 
   const onTouchStart = (event) => {
     event.preventDefault();
+    event.gesture?.preventDefault();
     startPanZoom(
       [...event.touches].map(({ pageX, pageY }) => ({ x: pageX, y: pageY }))
     );
   };
-  const onTouchMove = ({ touches }) =>
+  const onTouchMove = (event) => {
+    event.preventDefault();
     movePanZoom(
-      [...touches].map(({ pageX, pageY }) => ({ x: pageX, y: pageY }))
+      [...event.touches].map(({ pageX, pageY }) => ({ x: pageX, y: pageY }))
     );
+  };
   const onTouchEnd = () => endPanZoom();
   const onTouchCancel = () => endPanZoom();
   const onMouseDown = ({ pageX, pageY }) =>
