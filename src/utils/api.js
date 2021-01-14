@@ -1,15 +1,18 @@
 export class Api {
   async request(endpoint, { method, headers, body, ...params }) {
-    const response = await fetch(`/api/${endpoint}`, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      redirect: "follow",
-      body: body ? JSON.stringify(body) : undefined,
-      ...params,
-    });
+    const response = await fetch(
+      endpoint.startsWith("http") ? endpoint : `/api/${endpoint}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          ...headers,
+        },
+        redirect: "follow",
+        body: body ? JSON.stringify(body) : undefined,
+        ...params,
+      }
+    );
     if (response.ok) {
       const json = await response.json();
       return json;
