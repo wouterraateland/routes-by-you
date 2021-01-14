@@ -1,7 +1,12 @@
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  purge: ["./**/*.jsx", "./**/*.js"],
+  purge: {
+    content: ["./**/*.jsx", "./**/*.js"],
+    options: {
+      safelist: ["stroke-0", "stroke-1", "stroke-2", "stroke-3", "stroke-4"],
+    },
+  },
   darkMode: "class",
   theme: {
     extend: {

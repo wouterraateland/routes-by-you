@@ -246,10 +246,12 @@ export default function usePanZoom({
     }
   }, []);
 
-  const onTouchStart = ({ touches }) =>
+  const onTouchStart = (event) => {
+    event.preventDefault();
     startPanZoom(
-      [...touches].map(({ pageX, pageY }) => ({ x: pageX, y: pageY }))
+      [...event.touches].map(({ pageX, pageY }) => ({ x: pageX, y: pageY }))
     );
+  };
   const onTouchMove = ({ touches }) =>
     movePanZoom(
       [...touches].map(({ pageX, pageY }) => ({ x: pageX, y: pageY }))
