@@ -1,4 +1,4 @@
-import { RedirectError } from "utils/errors";
+import Router from "next/router";
 
 export function isAuthenticated(auth) {
   return !!auth.user;
@@ -10,12 +10,12 @@ export function isNotAuthenticated(auth) {
 
 export function redirectIfNotAuthenticated(auth, to = "/auth/login") {
   if (!auth.user) {
-    throw new RedirectError(to);
+    Router.replace(to);
   }
 }
 
 export function redirectIfAuthenticated(auth, to = "/dashboard") {
   if (auth.user) {
-    throw new RedirectError(to);
+    Router.replace(to);
   }
 }
