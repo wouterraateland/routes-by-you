@@ -14,7 +14,7 @@
     }
   ],
   "theme_color": "#2563eb",
-  "background_color": "#bfdbfe",
-  "start_url": "https://routesbyyou.com",
+  "background_color": "#2563eb",
+  "start_url": "https://routes-by-you.vercel.app",
   "display": "standalone"
 }

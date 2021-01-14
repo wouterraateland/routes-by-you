@@ -4,6 +4,7 @@ import { forwardRef, useRef } from "react";
 import useAsyncCallback from "hooks/useAsyncCallback";
 
 import ToolTip from "./ToolTip";
+import Loader from "./Loader";
 
 export default forwardRef(function Button(
   { children, onClick, bgColor, hint, disabled, className, ...props },
@@ -33,7 +34,7 @@ export default forwardRef(function Button(
         )}
         {...props}
       >
-        {showPending ? <div className="loader loader--sm" /> : children}
+        {showPending ? <Loader /> : children}
       </button>
       {hint && <ToolTip originRef={innerRef}>{hint}</ToolTip>}
     </>

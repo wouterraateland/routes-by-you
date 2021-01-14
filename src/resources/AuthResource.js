@@ -13,6 +13,7 @@ export default class AuthResource extends ObservableResource {
       })
     );
     supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(event, session);
       this.persistSession(session);
       this.onNext({ session, user: session?.user ?? null });
     });

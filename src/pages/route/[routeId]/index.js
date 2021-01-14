@@ -1,10 +1,11 @@
 import cx from "classnames";
 import { formatDistanceToNow } from "date-fns";
-
+import Router from "next/router";
+import { api } from "utils/api";
 import { supabase } from "utils/supabase";
 import { pointsToFont, pointsToHsl } from "utils/grades";
+import { redirectIfNotAuthenticated } from "utils/auth";
 
-import { useRouter } from "next/router";
 import useAuth from "hooks/useAuth";
 
 import Link from "next/link";
@@ -17,8 +18,8 @@ import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 
 export default function RepeatRoute({ route }) {
-  const router = useRouter();
-  const { user } = useAuth();
+  const { user } = useAuth(redirectIfNotAuthenticated);
+  const userId = user?.id;
 
   const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
@@ -34,13 +35,13 @@ export default function RepeatRoute({ route }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="sm:py-4 max-w-xl mx-auto">
+      <div className="sm:py-4 max-w-xl mx-auto sm:space-y-4">
         <div className="pb-4 sm:pb-0 sm:rounded-md sm:shadow-md bg-white">
           <div className="flex items-center justify-between p-2">
             <div className="flex items-center space-x-4">
               <Button
                 className="p-2 rounded-md hover:bg-gray-100"
-                onClick={() => router.back()}
+                onClick={() => Router.back()}
               >
                 <Cross className="h-4" direction="left" />
               </Button>
@@ -141,6 +142,20 @@ export default function RepeatRoute({ route }) {
             ))}
           </div>
         </div>
+        {route.setter_id === userId && (
+          <div className="p-4 sm:p-0">
+            <Button
+              bgColor="red"
+              className="w-full px-4 py-2 rounded-md text-white font-bold"
+              onClick={async () => {
+                await api.delete("route", { body: { id: route.id } });
+                Router.back();
+              }}
+            >
+              Delete route
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

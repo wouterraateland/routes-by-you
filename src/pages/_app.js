@@ -10,7 +10,7 @@ export default function MyApp({ Component, pageProps }) {
       <SSRSuspense
         fallback={
           <div className="flex items-center justify-center h-screen">
-            <Loader />
+            <Loader className="text-blue-600" />
           </div>
         }
       >

@@ -39,6 +39,13 @@ export default async (req, res) => {
     }
 
     if (req.method === "DELETE") {
+      const repDeleteRes = await supabase
+        .from("repeats")
+        .delete()
+        .eq("route_id", routeId);
+      if (repDeleteRes.error) {
+        return res.status(500).end(repDeleteRes.error.message);
+      }
       const deleteRes = await supabase
         .from("routes")
         .delete()
