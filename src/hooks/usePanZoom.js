@@ -1,4 +1,4 @@
-import { identity, maybe, noop } from "utils/functions";
+import { maybe, noop } from "utils/functions";
 
 import { useCallback, useEffect, useRef } from "react";
 
