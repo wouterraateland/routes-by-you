@@ -7,8 +7,9 @@ import { authResource } from "resources/AuthResource";
 import useResource from "hooks/useResource";
 
 import Link from "next/link";
-import Repeat from "components/icons/Repeat";
 import Camera from "components/icons/Camera";
+import Check from "components/icons/Check";
+import Repeat from "components/icons/Repeat";
 import StarRating from "components/StarRating";
 import RouteImage from "components/RouteImage";
 
@@ -102,13 +103,17 @@ export default function Route({ route }) {
           <Link href={`/route/${route.id}/repeat`}>
             <a
               className={cx(
-                "my-1 p-2 rounded-md",
+                "my-1 p-2",
                 repeated
-                  ? "bg-blue-600 hover:bg-blue-700 text-white"
-                  : "hover:bg-gray-100 text-gray-500"
+                  ? "rounded-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                  : "rounded-md hover:bg-gray-100 text-gray-500"
               )}
             >
-              <Repeat className="h-6" />
+              {repeated ? (
+                <Check className="h-6" />
+              ) : (
+                <Repeat className="h-6" />
+              )}
             </a>
           </Link>
         </div>

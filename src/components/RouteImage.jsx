@@ -27,7 +27,7 @@ export default function RouteImage({ route }) {
           <div
             key={hold.id}
             className={cx(
-              "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 border opacity-75",
+              "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 border hold-marker",
               hold.type === "finish"
                 ? "border-red-600"
                 : hold.type === "start"

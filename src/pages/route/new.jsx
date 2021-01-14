@@ -364,7 +364,7 @@ export default function NewRoute() {
               <div
                 key={hold.id}
                 className={cx(
-                  "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer border opacity-75",
+                  "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer border hold-marker",
                   hold.type === "finish"
                     ? "border-red-600"
                     : hold.type === "start"
