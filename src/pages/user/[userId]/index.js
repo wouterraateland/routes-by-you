@@ -1,5 +1,6 @@
 import { supabase } from "utils/supabase";
 
+import Head from "next/head";
 import Repeat from "components/icons/Repeat";
 import Flash from "components/icons/Flash";
 import Card from "components/ui/Card";
@@ -9,6 +10,9 @@ import Route from "components/Route";
 export default function UserPage({ user }) {
   return (
     <Shell>
+      <Head>
+        <title>{`${user.display_name} | Routes by You`}</title>
+      </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <div className="p-4 space-y-4 text-center">
           {user.avatar && (

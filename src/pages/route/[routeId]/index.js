@@ -5,13 +5,18 @@ import { api } from "utils/api";
 import { supabase } from "utils/supabase";
 import { pointsToFont, pointsToHsl } from "utils/grades";
 import { redirectIfNotAuthenticated } from "utils/auth";
+import { copyTextToClipboard } from "utils/strings";
 
+import { useEffect, useState } from "react";
 import useAuth from "hooks/useAuth";
 
+import Head from "next/head";
 import Link from "next/link";
-import Cross from "components/icons/Cross";
 import Camera from "components/icons/Camera";
+import Check from "components/icons/Check";
+import Cross from "components/icons/Cross";
 import Repeat from "components/icons/Repeat";
+import Share from "components/icons/Share";
 import StarRating from "components/StarRating";
 import Button from "components/ui/Button";
 import RouteImage from "components/RouteImage";
@@ -20,6 +25,14 @@ import RepeatThumb from "components/RepeatThumb";
 export default function RepeatRoute({ route }) {
   const { user } = useAuth(redirectIfNotAuthenticated);
   const userId = user?.id;
+
+  const [shared, setShared] = useState(false);
+  useEffect(() => {
+    if (shared) {
+      const t = setTimeout(() => setShared(false), 1000);
+      return () => clearTimeout(t);
+    }
+  }, [shared]);
 
   const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
@@ -35,6 +48,9 @@ export default function RepeatRoute({ route }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Head>
+        <title>{`${route.name} | Routes by You`}</title>
+      </Head>
       <div className="sm:py-4 max-w-xl mx-auto sm:space-y-4">
         <div className="pb-4 sm:pb-0 sm:rounded-md sm:shadow-md bg-white">
           <div className="flex items-center justify-between p-2">
@@ -113,18 +129,36 @@ export default function RepeatRoute({ route }) {
                   <p className="text-gray-500 text-sm">Not repeated yet</p>
                 )}
               </div>
-              <Link href={`/route/${route.id}/repeat`}>
-                <a
-                  className={cx(
-                    "my-1 p-2 rounded-md",
-                    repeated
-                      ? "bg-blue-600 hover:bg-blue-700 text-white font-bold"
-                      : "border hover:bg-gray-100 text-gray-500 font-bold"
-                  )}
+              <div className="my-1 flex items-center space-x-2">
+                <Link href={`/route/${route.id}/repeat`}>
+                  <a
+                    className={cx(
+                      "p-2",
+                      repeated
+                        ? "rounded-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                        : "rounded-md hover:bg-gray-100 text-gray-500"
+                    )}
+                  >
+                    {repeated ? (
+                      <Check className="h-6" />
+                    ) : (
+                      <Repeat className="h-6" />
+                    )}
+                  </a>
+                </Link>
+                <Button
+                  className="p-2 rounded-md hover:bg-gray-100 text-gray-500"
+                  onClick={async () => {
+                    await copyTextToClipboard(
+                      `${process.env.NEXT_PUBLIC_PUBLIC_URL}/route/${route.id}`
+                    );
+                    setShared(true);
+                  }}
+                  hint={shared ? "Link copied!" : "Share route"}
                 >
-                  <Repeat className="h-6" />
-                </a>
-              </Link>
+                  <Share className="h-6" />
+                </Button>
+              </div>
             </div>
             {route.description && <p className="py-2">{route.description}</p>}
             <p className="text-xs text-gray-400 uppercase">

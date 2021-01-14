@@ -4,6 +4,7 @@ import { supabase } from "utils/supabase";
 import { useState } from "react";
 import useAuth from "hooks/useAuth";
 
+import Head from "next/head";
 import Link from "next/link";
 import Button from "components/ui/Button";
 import Card from "components/ui/Card";
@@ -40,6 +41,9 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col space-y-4 items-center justify-center bg-gray-100">
+      <Head>
+        <title>Sign in | Routes by You</title>
+      </Head>
       <h1 className="text-4xl font-black">Routes by You</h1>
       <Card elevation="sm" className="w-full max-w-xs p-4">
         {sent ? (

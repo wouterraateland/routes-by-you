@@ -1,6 +1,7 @@
 import { supabase } from "utils/supabase";
 import { cleanUrl } from "utils/strings";
 
+import Head from "next/head";
 import Card from "components/ui/Card";
 import Shell from "components/Shell";
 import Route from "components/Route";
@@ -8,12 +9,16 @@ import Route from "components/Route";
 export default function LocationPage({ location }) {
   return (
     <Shell>
+      <Head>
+        <title>{`${location.name} | Routes by You`}</title>
+      </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <div className="p-4 space-y-4 text-center">
           {location.logo && (
             <img
               className="mx-auto w-24 h-24 rounded-full shadow-md"
               src={location.logo}
+              alt={location.name}
             />
           )}
           <div>

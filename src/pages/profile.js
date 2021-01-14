@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import useAuth from "hooks/useAuth";
 import useResource from "hooks/useResource";
 
+import Head from "next/head";
 import Shell from "components/Shell";
 import Button from "components/ui/Button";
 import ImageInput from "components/ui/ImageInput";
@@ -40,6 +41,9 @@ export default function Profile() {
 
   return (
     <Shell>
+      <Head>
+        <title>My profile | Routes by You</title>
+      </Head>
       <div className="max-w-xl mx-auto p-4 space-y-4">
         <form
           className="w-full max-w-sm space-y-2 mx-auto"

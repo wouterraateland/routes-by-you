@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import useAuth from "hooks/useAuth";
 import useResource from "hooks/useResource";
 
+import Head from "next/head";
 import Shell from "components/Shell";
 import Route from "components/Route";
 
@@ -26,6 +27,9 @@ export default function Dashboard({ routes, error }) {
 
   return (
     <Shell>
+      <Head>
+        <title>Dashboard | Routes by You</title>
+      </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         {error ? (
           <p className="px-4 py-2 rounded-md bg-red-100 text-red-600">

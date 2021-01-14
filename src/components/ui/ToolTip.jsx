@@ -7,8 +7,6 @@ import useCSSTransition from "hooks/useCSSTransition";
 
 import Portal from "containers/Portal";
 
-const MARGIN = 8;
-
 export default function ToolTip({
   originRef,
   direction = "vertical",
@@ -33,10 +31,7 @@ export default function ToolTip({
         y: rect.y + rect.height / 2,
       };
 
-      toolTip.style.maxWidth = `${Math.min(
-        maxWidth,
-        window.innerWidth - 2 * MARGIN
-      )}px`;
+      toolTip.style.maxWidth = `${Math.min(maxWidth, window.innerWidth)}px`;
 
       const wWidth = window.innerWidth;
       const wHeight = window.innerHeight;
@@ -56,20 +51,17 @@ export default function ToolTip({
 
       toolTip.style.left = `${
         _direction === "left"
-          ? position.x - (width + rect.width / 2 + MARGIN)
+          ? position.x - (width + rect.width / 2)
           : _direction === "right"
-          ? position.x + rect.width / 2 + MARGIN
-          : between(MARGIN, wWidth - (width + MARGIN))(position.x - width / 2)
+          ? position.x + rect.width / 2
+          : between(0, wWidth - width)(position.x - width / 2)
       }px`;
       toolTip.style.top = `${
         _direction === "bottom"
-          ? position.y + MARGIN
+          ? position.y + rect.height / 2
           : _direction === "top"
-          ? position.y - (height + MARGIN)
-          : between(
-              MARGIN,
-              wHeight - (height + MARGIN)
-            )(position.y - height / 2)
+          ? position.y - (height + rect.height / 2)
+          : between(0, wHeight - height)(position.y - height / 2)
       }px`;
     }
   }, [originRef, direction, maxWidth, toolTipRef]);
@@ -77,19 +69,13 @@ export default function ToolTip({
   useEffect(() => {
     const origin = originRef.current;
 
-    if (origin && typeof window !== "undefined") {
+    if (origin) {
       const show = () => {
         setPosition();
-        window.addEventListener("mousewheel", setPosition);
-        window.addEventListener("mousemove", setPosition);
         setVisibility(true);
       };
 
-      const hide = () => {
-        window.removeEventListener("mousewheel", setPosition);
-        window.removeEventListener("mousemove", setPosition);
-        setVisibility(false);
-      };
+      const hide = () => setVisibility(false);
 
       origin.addEventListener("mouseenter", show);
       origin.addEventListener("mouseleave", hide);
@@ -97,22 +83,21 @@ export default function ToolTip({
       return () => {
         origin.removeEventListener("mouseenter", show);
         origin.removeEventListener("mouseleave", hide);
-        window.removeEventListener("mousewheel", setPosition);
-        window.removeEventListener("mousemove", setPosition);
       };
     }
   }, [originRef, setPosition]);
 
   return (
     <Portal>
-      <span
-        ref={toolTipRef}
-        className={cx(
-          "fixed pointer-events-none z-50 block py-1 px-2 rounded-md text-sm text-left bg-gray-900 text-white",
-          className
-        )}
-      >
-        {children}
+      <span className="fixed pointer-events-none z-50" ref={toolTipRef}>
+        <span
+          className={cx(
+            "block m-2 py-1 px-2 rounded-md text-sm text-left bg-gray-900 text-white",
+            className
+          )}
+        >
+          {children}
+        </span>
       </span>
     </Portal>
   );

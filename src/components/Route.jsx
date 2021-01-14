@@ -1,20 +1,32 @@
 import cx from "classnames";
-import { pointsToFont, pointsToHsl } from "utils/grades";
 import { formatDistanceToNow } from "date-fns";
+import { pointsToFont, pointsToHsl } from "utils/grades";
+import { copyTextToClipboard } from "utils/strings";
 
 import { authResource } from "resources/AuthResource";
 
+import { useEffect, useState } from "react";
 import useResource from "hooks/useResource";
 
 import Link from "next/link";
 import Camera from "components/icons/Camera";
 import Check from "components/icons/Check";
 import Repeat from "components/icons/Repeat";
+import Share from "components/icons/Share";
+import Button from "components/ui/Button";
 import StarRating from "components/StarRating";
 import RouteImage from "components/RouteImage";
 
 export default function Route({ route }) {
   const { user } = useResource(authResource);
+
+  const [shared, setShared] = useState(false);
+  useEffect(() => {
+    if (shared) {
+      const t = setTimeout(() => setShared(false), 1000);
+      return () => clearTimeout(t);
+    }
+  }, [shared]);
 
   const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
@@ -100,22 +112,36 @@ export default function Route({ route }) {
               <p className="text-gray-500 text-sm">Not repeated yet</p>
             )}
           </div>
-          <Link href={`/route/${route.id}/repeat`}>
-            <a
-              className={cx(
-                "my-1 p-2",
-                repeated
-                  ? "rounded-full bg-green-600 hover:bg-green-700 text-white font-bold"
-                  : "rounded-md hover:bg-gray-100 text-gray-500"
-              )}
+          <div className="my-1 flex items-center space-x-2">
+            <Link href={`/route/${route.id}/repeat`}>
+              <a
+                className={cx(
+                  "p-2",
+                  repeated
+                    ? "rounded-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                    : "rounded-md hover:bg-gray-100 text-gray-500"
+                )}
+              >
+                {repeated ? (
+                  <Check className="h-6" />
+                ) : (
+                  <Repeat className="h-6" />
+                )}
+              </a>
+            </Link>
+            <Button
+              className="p-2 rounded-md hover:bg-gray-100 text-gray-500"
+              onClick={async () => {
+                await copyTextToClipboard(
+                  `${process.env.NEXT_PUBLIC_PUBLIC_URL}/route/${route.id}`
+                );
+                setShared(true);
+              }}
+              hint={shared ? "Link copied!" : "Share route"}
             >
-              {repeated ? (
-                <Check className="h-6" />
-              ) : (
-                <Repeat className="h-6" />
-              )}
-            </a>
-          </Link>
+              <Share className="h-6" />
+            </Button>
+          </div>
         </div>
         {route.description && <p className="py-2">{route.description}</p>}
         <p className="text-xs text-gray-400 uppercase">

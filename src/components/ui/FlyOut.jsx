@@ -5,8 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import Modal from "containers/Modal";
 
-const MARGIN = 8;
-
 const toRect = (el) =>
   el?.getBoundingClientRect() || {
     top: 0,
@@ -59,28 +57,27 @@ export default function FlyOut({
 
       const cTop =
         _direction === "bottom"
-          ? originRect.bottom + MARGIN
+          ? originRect.bottom
           : _direction === "top"
-          ? Math.max(MARGIN, originRect.top - (height + MARGIN))
-          : between(MARGIN, wHeight - (height + MARGIN))(originRect.top);
+          ? Math.max(0, originRect.top - height)
+          : between(0, wHeight - height)(originRect.top);
       const cLeft =
         _direction === "left"
-          ? Math.max(MARGIN, originRect.left - (width + MARGIN))
+          ? Math.max(0, originRect.left - width)
           : _direction === "right"
-          ? originRect.right + MARGIN
-          : between(MARGIN, wWidth - (width + MARGIN))(originRect.left);
+          ? originRect.right
+          : between(0, wWidth - width)(originRect.left);
 
       container.style.maxWidth = `${wWidth - 16}px`;
       container.style.top = `${cTop}px`;
       container.style.left = `${cLeft}px`;
 
       container.style.maxHeight = `${
-        (_direction === "top"
+        _direction === "top"
           ? originRect.top
           : _direction === "bottom"
           ? wHeight - originRect.bottom
-          : wHeight) -
-        MARGIN * 2
+          : wHeight
       }px`;
     }
   }, [origin, direction]);
@@ -115,16 +112,17 @@ export default function FlyOut({
 
   return (
     <Modal isOpen={isOpen || visible} onClose={close}>
-      <div
-        className={cx(
-          "fixed rounded-md shadow-md bg-white overflow-y-auto",
-          { "opacity-0": !visible },
-          className
-        )}
-        ref={containerRef}
-        onClick={persistOnClick ? undefined : close}
-      >
-        {children}
+      <div ref={containerRef} className="fixed">
+        <div
+          className={cx(
+            "m-2 rounded-md shadow-md bg-white overflow-y-auto",
+            { "opacity-0": !visible },
+            className
+          )}
+          onClick={persistOnClick ? undefined : close}
+        >
+          {children}
+        </div>
       </div>
     </Modal>
   );

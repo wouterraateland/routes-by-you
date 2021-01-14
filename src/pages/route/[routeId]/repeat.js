@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import useAuth from "hooks/useAuth";
 
+import Head from "next/head";
 import Cross from "components/icons/Cross";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
@@ -34,6 +35,9 @@ export default function RepeatRoute({ route }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Head>
+        <title>{`Repeat | ${route.name}`}</title>
+      </Head>
       <div className="min-h-screen max-w-xl mx-auto flex flex-col">
         <header className="flex items-center justify-between p-2">
           <div className="w-20">

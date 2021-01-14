@@ -1,37 +1,57 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-export default function useCSSTransition(flag, { ref, timeout, appear }) {
+const defaultClassNames = {
+  enter: "enter",
+  enterActive: "enter-active",
+  enterDone: "enter-done",
+  exit: "exit",
+  exitActive: "exit-active",
+  exitDone: "exit-done",
+};
+
+export default function useCSSTransition(
+  flag,
+  { ref, timeout, appear, classNames = defaultClassNames }
+) {
   const innerRef = useRef(null);
   const stateRef = useRef(appear ? "appear" : "enter");
 
   const actualRef = ref || innerRef;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (actualRef.current) {
       actualRef.current.style.transitionDuration = `${timeout}ms`;
       let t1 = null;
       let t2 = null;
       if (flag) {
         if (stateRef.current.startsWith("enter")) {
-          if (!actualRef.current.className.includes("enter")) {
-            actualRef.current.classList.add("enter-done");
+          if (
+            ![
+              classNames.enter,
+              classNames.enterActive,
+              classNames.enterDone,
+            ].some((className) =>
+              actualRef.current.className.includes(className)
+            )
+          ) {
+            actualRef.current.classList.add(classNames.enterDone);
           }
         } else {
           stateRef.current = "enter";
           actualRef.current.classList.remove(
-            "exit",
-            "exit-active",
-            "exit-done"
+            classNames.exit,
+            classNames.exitActive,
+            classNames.exitDone
           );
-          actualRef.current.classList.add("enter");
+          actualRef.current.classList.add(classNames.enter);
           t1 = setTimeout(() => {
             if (actualRef.current) {
-              actualRef.current.classList.remove("enter");
-              actualRef.current.classList.add("enter-active");
+              actualRef.current.classList.remove(classNames.enter);
+              actualRef.current.classList.add(classNames.enterActive);
               t2 = setTimeout(() => {
                 if (actualRef.current) {
-                  actualRef.current.classList.remove("enter-active");
-                  actualRef.current.classList.add("enter-done");
+                  actualRef.current.classList.remove(classNames.enterActive);
+                  actualRef.current.classList.add(classNames.enterDone);
                 }
               }, timeout);
             }
@@ -39,25 +59,33 @@ export default function useCSSTransition(flag, { ref, timeout, appear }) {
         }
       } else {
         if (stateRef.current.startsWith("exit")) {
-          if (!actualRef.current.className.includes("exit")) {
-            actualRef.current.classList.add("exit-done");
+          if (
+            ![
+              classNames.exit,
+              classNames.exitActive,
+              classNames.exitDone,
+            ].some((className) =>
+              actualRef.current.className.includes(className)
+            )
+          ) {
+            actualRef.current.classList.add(classNames.exitDone);
           }
         } else {
           stateRef.current = "exit";
           actualRef.current.classList.remove(
-            "enter",
-            "enter-active",
-            "enter-done"
+            classNames.enter,
+            classNames.enterActive,
+            classNames.enterDone
           );
-          actualRef.current.classList.add("exit");
+          actualRef.current.classList.add(classNames.exit);
           t1 = setTimeout(() => {
             if (actualRef.current) {
-              actualRef.current.classList.remove("exit");
-              actualRef.current.classList.add("exit-active");
+              actualRef.current.classList.remove(classNames.exit);
+              actualRef.current.classList.add(classNames.exitActive);
               t2 = setTimeout(() => {
                 if (actualRef.current) {
-                  actualRef.current.classList.remove("exit-active");
-                  actualRef.current.classList.add("exit-done");
+                  actualRef.current.classList.remove(classNames.exitActive);
+                  actualRef.current.classList.add(classNames.exitDone);
                 }
               }, timeout);
             }
