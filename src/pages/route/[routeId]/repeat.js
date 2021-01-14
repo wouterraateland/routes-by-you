@@ -88,15 +88,15 @@ export default function RepeatRoute({ route }) {
           <Field label="Grade" className="text-center">
             <select
               className="w-48 px-4 py-2 rounded-md border focus:outline-none focus:border-blue-600 text-2xl font-bold"
-              value={repeat.grade}
+              value={repeat.grade || ""}
               onChange={(event) =>
                 setRepeat((repeat) => ({
                   ...repeat,
-                  grade: event.target.value,
+                  grade: event.target.value || null,
                 }))
               }
             >
-              <option value={null}>?</option>
+              <option value="">?</option>
               {Object.keys(fontByPoints)
                 .sort()
                 .map((points) => (
@@ -121,7 +121,7 @@ export default function RepeatRoute({ route }) {
           <Field
             label="Link to video"
             hint="Youtube, Instagram, etc."
-            className="max-w-sm mx-auto"
+            className="max-w-sm mx-auto px-4"
           >
             <Input
               value={repeat.video || ""}
@@ -170,6 +170,7 @@ export async function getServerSideProps({ params }) {
       `
     )
     .eq("id", routeId)
+    .order("created_at", { ascending: false, foreignTable: "repeats" })
     .single();
   if (error) {
     console.error(error);

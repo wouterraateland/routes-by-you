@@ -11,20 +11,22 @@ export default function UserPage({ user }) {
     <Shell>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <div className="p-4 space-y-4 text-center">
-          <img
-            className="mx-auto w-24 h-24 rounded-full shadow-md"
-            src={user.avatar}
-          />
+          {user.avatar && (
+            <img
+              className="mx-auto w-24 h-24 rounded-full shadow-md"
+              src={user.avatar}
+            />
+          )}
           <h1 className="text-xl font-bold">{user.display_name}</h1>
           <div className="flex items-center justify-center space-x-4">
-            <Card className="flex items-center space-x-2 p-4">
+            <Card className="flex items-center p-2 space-x-2 sm:p-4">
               <Flash className="h-4" />
               <p>
                 Set {user.routes.length} route
                 {user.routes.length === 1 ? "" : "s"}
               </p>
             </Card>
-            <Card className="flex items-center space-x-2 p-4">
+            <Card className="flex items-center p-2 space-x-2 sm:p-4">
               <Repeat className="h-4" />
               <p>
                 Climbed {user.repeats.length} route
@@ -61,6 +63,8 @@ export async function getServerSideProps({ params }) {
       `
     )
     .eq("id", userId)
+    .order("created_at", { ascending: false, foreignTable: "routes" })
+    .order("created_at", { ascending: false, foreignTable: "repeats" })
     .single();
   if (error) {
     console.error(error);

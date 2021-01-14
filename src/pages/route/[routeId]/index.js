@@ -5,9 +5,7 @@ import { supabase } from "utils/supabase";
 import { pointsToFont, pointsToHsl } from "utils/grades";
 
 import { useRouter } from "next/router";
-import useResource from "hooks/useResource";
-
-import { authResource } from "resources/AuthResource";
+import useAuth from "hooks/useAuth";
 
 import Link from "next/link";
 import Cross from "components/icons/Cross";
@@ -15,12 +13,12 @@ import Camera from "components/icons/Camera";
 import Repeat from "components/icons/Repeat";
 import StarRating from "components/StarRating";
 import Button from "components/ui/Button";
+import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 
 export default function RepeatRoute({ route }) {
   const router = useRouter();
-
-  const { user } = useResource(authResource);
+  const { user } = useAuth();
 
   const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
@@ -46,14 +44,16 @@ export default function RepeatRoute({ route }) {
               >
                 <Cross className="h-4" direction="left" />
               </Button>
-              <Link href={`/user/${route.setter.id}`}>
-                <a>
-                  <img
-                    className="w-10 h-10 rounded-full"
-                    src={route.setter.avatar}
-                  />
-                </a>
-              </Link>
+              {route.setter.avatar && (
+                <Link href={`/user/${route.setter.id}`}>
+                  <a>
+                    <img
+                      className="w-10 h-10 rounded-full"
+                      src={route.setter.avatar}
+                    />
+                  </a>
+                </Link>
+              )}
               <div>
                 <p className="font-bold">
                   <Link href={`/user/${route.setter.id}`}>
@@ -84,7 +84,7 @@ export default function RepeatRoute({ route }) {
               {pointsToFont(avgGrade)}
             </p>
           </div>
-          <img className="w-full" src={route.image} />
+          <RouteImage route={route} />
           <div className="p-2 sm:px-4">
             <div className="flex items-start justify-between space-x-2">
               <div>
@@ -115,14 +115,13 @@ export default function RepeatRoute({ route }) {
               <Link href={`/route/${route.id}/repeat`}>
                 <a
                   className={cx(
-                    "flex space-x-2 my-1 p-2 rounded-md",
+                    "my-1 p-2 rounded-md",
                     repeated
                       ? "bg-blue-600 hover:bg-blue-700 text-white font-bold"
                       : "border hover:bg-gray-100 text-gray-500 font-bold"
                   )}
                 >
                   <Repeat className="h-6" />
-                  <span>Sent it</span>
                 </a>
               </Link>
             </div>
@@ -132,6 +131,11 @@ export default function RepeatRoute({ route }) {
             </p>
           </div>
           <div>
+            {route.repeats.length > 0 && (
+              <div className="pt-2 px-2 sm:px-4">
+                <h2 className="text-lg font-bold">Repeats</h2>
+              </div>
+            )}
             {route.repeats.map((repeat) => (
               <RepeatThumb key={repeat.id} repeat={repeat} />
             ))}

@@ -10,10 +10,12 @@ export default function LocationPage({ location }) {
     <Shell>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <div className="p-4 space-y-4 text-center">
-          <img
-            className="mx-auto w-24 h-24 rounded-full shadow-md"
-            src={location.logo}
-          />
+          {location.logo && (
+            <img
+              className="mx-auto w-24 h-24 rounded-full shadow-md"
+              src={location.logo}
+            />
+          )}
           <div>
             <h1 className="text-xl font-bold">{location.name}</h1>
             {location.url && (
@@ -63,6 +65,7 @@ export async function getServerSideProps({ params }) {
       `
     )
     .eq("id", locationId)
+    .order("created_at", { ascending: false, foreignTable: "routes" })
     .single();
   if (error) {
     console.error(error);

@@ -16,6 +16,8 @@ import ImageInput from "components/ui/ImageInput";
 import Input from "components/ui/Input";
 import Textarea from "components/ui/Textarea";
 import { supabase } from "utils/supabase";
+import { api } from "utils/api";
+import { between } from "utils/math";
 
 function getPositionOnImage(event, { scale }) {
   const rect = event.target.getBoundingClientRect();
@@ -28,6 +30,7 @@ function getPositionOnImage(event, { scale }) {
 export default function NewRoute() {
   useEffect(() => import("pinch-zoom-element"), []);
   const pinchZoomRef = useRef();
+  const imgRef = useRef();
 
   const { user } = useAuth(redirectIfNotAuthenticated);
 
@@ -66,6 +69,46 @@ export default function NewRoute() {
   );
 
   useEffect(() => {
+    const pinchZoom = pinchZoomRef.current;
+    const img = imgRef.current;
+    if (pinchZoom && img) {
+      const resize = () => {
+        const cW = pinchZoom.offsetWidth;
+        const cH = pinchZoom.offsetHeight;
+        const scale = Math.min(cW / img.naturalWidth, cH / img.naturalHeight);
+        const iW = scale * img.naturalWidth;
+        const iH = scale * img.naturalHeight;
+
+        pinchZoom.setTransform({
+          scale,
+          x: (cW - iW) / 2,
+          y: (cH - iH) / 2,
+        });
+      };
+      resize();
+
+      const fixBounds = () => {
+        const cW = pinchZoom.offsetWidth;
+        const cH = pinchZoom.offsetHeight;
+        const iW = pinchZoom.scale * img.naturalWidth;
+        const iH = pinchZoom.scale * img.naturalHeight;
+
+        pinchZoom.setTransform({
+          x: iW < cW ? (cW - iW) / 2 : between(cW - iW, 0)(pinchZoom.x),
+          y: iH < cH ? (cH - iH) / 2 : between(cH - iH, 0)(pinchZoom.y),
+        });
+      };
+
+      pinchZoom.addEventListener("change", fixBounds);
+      window.addEventListener("resize", resize);
+      return () => {
+        pinchZoom.addEventListener("change", fixBounds);
+        window.removeEventListener("resize", resize);
+      };
+    }
+  }, [route.image, step]);
+
+  useEffect(() => {
     const fetchSuggestions = async () => {
       if (route.location_id) {
         const { data } = await supabase
@@ -77,7 +120,7 @@ export default function NewRoute() {
         const { data } = await supabase
           .from("locations")
           .select("*")
-          .ilike("name", `${route.location_string}%`);
+          .ilike("name", `%${route.location_string}%`);
         setSuggestedLocations(data);
       } else {
         setSuggestedLocations([]);
@@ -152,7 +195,7 @@ export default function NewRoute() {
             <>
               <Button
                 className="px-3 py-1 rounded-md hover:bg-gray-100 font-bold"
-                onClick={() => setStep(1)}
+                onClick={() => setStep(2)}
               >
                 Back
               </Button>
@@ -160,8 +203,11 @@ export default function NewRoute() {
               <Button
                 bgColor="blue"
                 className="px-3 py-1 rounded-md font-bold text-white"
-                onClick={() => setStep(3)}
-                disabled={!route.name || !route.location_string}
+                onClick={async () => {
+                  const createdRoute = await api.post("route", { body: route });
+                  Router.replace(`/route/${createdRoute.id}`);
+                }}
+                disabled={!route.name || !route.location_string || !route.grade}
               >
                 Publish
               </Button>
@@ -232,11 +278,13 @@ export default function NewRoute() {
             {route.location_id ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <img
-                    src={location.logo}
-                    className="w-8 h-8 rounded-full shadow-md"
-                    alt={location.name}
-                  />
+                  {location.logo && (
+                    <img
+                      src={location.logo}
+                      className="w-8 h-8 rounded-full shadow-md"
+                      alt={location.name}
+                    />
+                  )}
                   <span>{location.name}</span>
                 </div>
                 <Button
@@ -262,7 +310,6 @@ export default function NewRoute() {
           </Field>
           {!route.location_id && suggestedLocations.length > 0 && (
             <div>
-              <p className="text-gray-500">Suggestions</p>
               {suggestedLocations.map((location) => (
                 <Button
                   key={location.id}
@@ -274,11 +321,15 @@ export default function NewRoute() {
                     }))
                   }
                 >
-                  <img
-                    src={location.logo}
-                    className="w-6 h-6 rounded-full"
-                    alt={location.name}
-                  />
+                  {location.logo ? (
+                    <img
+                      src={location.logo}
+                      className="w-6 h-6 rounded-full"
+                      alt={location.name}
+                    />
+                  ) : (
+                    <span className="w-px h-px" />
+                  )}
                   <span>{location.name}</span>
                 </Button>
               ))}
@@ -287,70 +338,78 @@ export default function NewRoute() {
         </div>
       ) : (
         <pinch-zoom ref={pinchZoomRef} class="flex flex-grow">
-          <div className="m-auto">
-            <div className="relative">
-              <img
-                src={route.image}
-                className="max-w-full max-h-full select-none"
-                onClick={(event) => {
-                  const position = getPositionOnImage(
-                    event,
-                    pinchZoomRef.current
-                  );
-                  addHold({
-                    position,
-                    size: 48 / pinchZoomRef.current.scale,
-                    type: null,
-                    id: uuidv4(),
-                  });
+          <div className="relative">
+            <img
+              ref={imgRef}
+              src={route.image}
+              className="max-w-none select-none"
+              onClick={
+                step === 0
+                  ? (event) => {
+                      const position = getPositionOnImage(
+                        event,
+                        pinchZoomRef.current
+                      );
+                      addHold({
+                        position,
+                        size: 48 / pinchZoomRef.current.scale,
+                        type: null,
+                        id: uuidv4(),
+                      });
+                    }
+                  : undefined
+              }
+            />
+            {route.holds?.map((hold) => (
+              <div
+                key={hold.id}
+                className={cx(
+                  "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer border opacity-75",
+                  hold.type === "finish"
+                    ? "border-red-600"
+                    : hold.type === "start"
+                    ? "border-green-400"
+                    : "border-white"
+                )}
+                style={{
+                  top: hold.position.y,
+                  left: hold.position.x,
+                  width: `${hold.size}px`,
+                  height: `${hold.size}px`,
+                  borderWidth: `${Math.max(
+                    2,
+                    2 / pinchZoomRef.current?.scale,
+                    hold.size / 16
+                  )}px`,
                 }}
-              />
-              {route.holds.map((hold) => (
-                <div
-                  key={hold.id}
-                  className={cx(
-                    "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer border-2 opacity-75",
-                    hold.type === "finish"
-                      ? "border-red-600"
-                      : hold.type === "start"
-                      ? "border-green-400"
-                      : "border-white"
-                  )}
-                  style={{
-                    top: hold.position.y,
-                    left: hold.position.x,
-                    width: `${hold.size}px`,
-                    height: `${hold.size}px`,
-                  }}
-                  onClick={() =>
-                    step === 0
-                      ? deleteHold(hold.id)
-                      : updateHold(hold.id, {
-                          type:
-                            step === 1
-                              ? hold.type === "start"
-                                ? null
-                                : hold.type === null
-                                ? route.holds.filter(
-                                    (hold) => hold.type === "start"
-                                  ).length <= 1
-                                  ? "start"
-                                  : hold.type
-                                : hold.type
-                              : hold.type === "finish"
+                onClick={() =>
+                  step === 0
+                    ? deleteHold(hold.id)
+                    : updateHold(hold.id, {
+                        type:
+                          step === 1
+                            ? hold.type === "start"
                               ? null
                               : hold.type === null
                               ? route.holds.filter(
-                                  (hold) => hold.type === "finish"
-                                ).length === 0
-                                ? "finish"
+                                  (hold) => hold.type === "start"
+                                ).length <= 1
+                                ? "start"
                                 : hold.type
-                              : hold.type,
-                        })
-                  }
-                />
-              ))}
-            </div>
+                              : hold.type
+                            : hold.type === "finish"
+                            ? null
+                            : hold.type === null
+                            ? route.holds.filter(
+                                (hold) => hold.type === "finish"
+                              ).length === 0
+                              ? "finish"
+                              : hold.type
+                            : hold.type,
+                      })
+                }
+              />
+            ))}
           </div>
         </pinch-zoom>
       )}
@@ -364,6 +423,7 @@ export default function NewRoute() {
         Cancel
       </Button>
       <ImageInput
+        compression={{ maxArea: 640 * 1280 }}
         className="w-64 h-64 rounded-md border"
         value={route.image}
         onChange={({ data }) =>
