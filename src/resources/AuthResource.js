@@ -9,7 +9,7 @@ export default class AuthResource extends ObservableResource {
         supabase.auth.refreshSession().then(() => {
           const session = supabase.auth.session();
           this.persistSession(session);
-          resolve({ session, user: session?.user });
+          resolve({ session, user: session?.user ?? null });
         });
       })
     );
