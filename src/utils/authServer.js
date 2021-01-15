@@ -17,26 +17,3 @@ export async function getUser(req) {
 
   return { user, error: null };
 }
-
-export async function redirectIfAuthenticated({ req }) {
-  const { user } = await getUser(req);
-
-  if (user) {
-    return { props: {}, redirect: { destination: "/admin", permanent: false } };
-  } else {
-    return { props: {} };
-  }
-}
-
-export async function redirectIfNotAuthenticated({ req }) {
-  const { user } = await getUser(req);
-
-  if (!user) {
-    return {
-      props: {},
-      redirect: { destination: "/auth/login", permanent: false },
-    };
-  } else {
-    return { props: {} };
-  }
-}

@@ -1,8 +1,6 @@
 import cx from "classnames";
-import { redirectIfNotAuthenticated } from "utils/auth";
 
 import { useRouter } from "next/router";
-import useAuth from "hooks/useAuth";
 
 import Link from "next/link";
 import Home from "components/icons/Home";
@@ -16,8 +14,6 @@ const tabs = [
 ];
 
 export default function Shell({ children }) {
-  useAuth(redirectIfNotAuthenticated);
-
   const { pathname } = useRouter();
 
   return (
