@@ -1,25 +1,17 @@
-import { between } from "utils/math";
 import cx from "classnames";
+import { setStyle } from "utils/dom";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import Modal from "containers/Modal";
-
-const toRect = (el) =>
-  el?.getBoundingClientRect() || {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  };
 
 export default function FlyOut({
   direction = "vertical",
   persistOnClick,
   originNode,
   originRef,
-  isOpen,
   defaultOpen = false,
+  isOpen,
   onClose,
   children,
   className,
@@ -32,53 +24,75 @@ export default function FlyOut({
   const origin = originRef?.current || originNode;
 
   const [visible, setVisibility] = useState(defaultOpen);
-  const containerRef = useRef(null);
+  const flyOutRef = useRef(null);
 
   const render = useCallback(() => {
-    const originRect = toRect(origin);
-    const container = containerRef.current;
+    const flyOut = flyOutRef.current;
 
-    if (origin && originRect && container && typeof window !== "undefined") {
+    if (origin && flyOut && typeof window !== "undefined") {
+      const rect = origin.getBoundingClientRect();
       const wWidth = window.innerWidth;
       const wHeight = window.innerHeight;
-      const width = container.offsetWidth;
-      const height = container.offsetHeight;
 
       const _direction =
         direction === "vertical"
-          ? originRect.top + originRect.height / 2 < wHeight / 2
+          ? rect.top + rect.height / 2 < wHeight / 2
             ? "bottom"
             : "top"
           : direction === "horizontal"
-          ? originRect.left + originRect.width / 2 < wWidth / 2
+          ? rect.left + rect.width / 2 < wWidth / 2
             ? "right"
             : "left"
           : direction;
 
-      const cTop =
-        _direction === "bottom"
-          ? originRect.bottom
-          : _direction === "top"
-          ? Math.max(0, originRect.top - height)
-          : between(0, wHeight - height)(originRect.top);
-      const cLeft =
-        _direction === "left"
-          ? Math.max(0, originRect.left - width)
-          : _direction === "right"
-          ? originRect.right
-          : between(0, wWidth - width)(originRect.left);
-
-      container.style.maxWidth = `${wWidth - 16}px`;
-      container.style.top = `${cTop}px`;
-      container.style.left = `${cLeft}px`;
-
-      container.style.maxHeight = `${
-        _direction === "top"
-          ? originRect.top
-          : _direction === "bottom"
-          ? wHeight - originRect.bottom
-          : wHeight
-      }px`;
+      switch (_direction) {
+        case "top":
+          setStyle(flyOut, {
+            top: undefined,
+            left: rect.x + rect.width / 2,
+            bottom: wHeight - rect.y,
+            right: undefined,
+            transform: `translate(-50%, 0)`,
+            maxWidth: wWidth,
+            maxHeight: rect.top,
+          });
+          break;
+        case "left":
+          setStyle(flyOut, {
+            top: rect.y + rect.height / 2,
+            left: undefined,
+            bottom: undefined,
+            right: rect.x,
+            transform: `translate(0, -50%)`,
+            maxWidth: rect.x,
+            maxHeight: wHeight,
+          });
+          break;
+        case "bottom":
+          setStyle(flyOut, {
+            top: rect.y + rect.height,
+            left: rect.x + rect.width / 2,
+            bottom: undefined,
+            right: undefined,
+            transform: `translate(-50%, 0)`,
+            maxWidth: wWidth,
+            maxHeight: wHeight - rect.bottom,
+          });
+          break;
+        case "right":
+          setStyle(flyOut, {
+            top: rect.y + rect.height / 2,
+            left: rect.x + rect.width,
+            bottom: undefined,
+            right: undefined,
+            transform: `translate(0, -50%)`,
+            maxWidth: wWidth - (rect.x + rect.width),
+            maxHeight: wHeight,
+          });
+          break;
+        default:
+          break;
+      }
     }
   }, [origin, direction]);
 
@@ -112,7 +126,7 @@ export default function FlyOut({
 
   return (
     <Modal isOpen={isOpen || visible} onClose={close}>
-      <div ref={containerRef} className="fixed">
+      <div ref={flyOutRef} className="fixed">
         <div
           className={cx(
             "m-2 rounded-md shadow-md bg-white overflow-y-auto",

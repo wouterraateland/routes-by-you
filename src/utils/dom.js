@@ -42,3 +42,14 @@ export const getPositionOnElement = compose(
 export const isChildOf = (child, parent) =>
   !!(child && parent) &&
   (child === parent || isChildOf(child.parentElement, parent));
+
+export const setStyle = (node, style) => {
+  const _style = Object.keys(style).reduce(
+    (acc, key) => ({
+      ...acc,
+      [key]: typeof style[key] === "number" ? `${style[key]}px` : style[key],
+    }),
+    {}
+  );
+  Object.assign(node.style, _style);
+};

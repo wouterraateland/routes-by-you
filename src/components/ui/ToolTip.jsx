@@ -1,6 +1,6 @@
-import { appear } from "utils/transitions";
-import { between } from "utils/math";
 import cx from "classnames";
+import { appear } from "utils/transitions";
+import { setStyle } from "utils/dom";
 
 import { useCallback, useEffect, useState } from "react";
 import useCSSTransition from "hooks/useCSSTransition";
@@ -22,47 +22,70 @@ export default function ToolTip({
   });
 
   const setPosition = useCallback(() => {
-    const rect = originRef.current?.getClientRects()[0];
+    const origin = originRef.current;
     const toolTip = toolTipRef.current;
 
-    if (rect && toolTip && typeof window !== "undefined") {
-      const position = {
-        x: rect.x + rect.width / 2,
-        y: rect.y + rect.height / 2,
-      };
-
-      toolTip.style.maxWidth = `${Math.min(maxWidth, window.innerWidth)}px`;
+    if (origin && toolTip && typeof window !== "undefined") {
+      const rect = origin.getBoundingClientRect();
 
       const wWidth = window.innerWidth;
       const wHeight = window.innerHeight;
-      const width = toolTip.offsetWidth;
-      const height = toolTip.offsetHeight;
 
       const _direction =
         direction === "vertical"
-          ? position.y < wHeight / 2
+          ? rect.y + rect.height / 2 < wHeight / 2
             ? "bottom"
             : "top"
           : direction === "horizontal"
-          ? position.x < wWidth / 2
+          ? rect.x + rect.width / 2 < wWidth / 2
             ? "right"
             : "left"
           : direction;
 
-      toolTip.style.left = `${
-        _direction === "left"
-          ? position.x - (width + rect.width / 2)
-          : _direction === "right"
-          ? position.x + rect.width / 2
-          : between(0, wWidth - width)(position.x - width / 2)
-      }px`;
-      toolTip.style.top = `${
-        _direction === "bottom"
-          ? position.y + rect.height / 2
-          : _direction === "top"
-          ? position.y - (height + rect.height / 2)
-          : between(0, wHeight - height)(position.y - height / 2)
-      }px`;
+      switch (_direction) {
+        case "top":
+          setStyle(toolTip, {
+            top: undefined,
+            left: rect.x + rect.width / 2,
+            bottom: wHeight - rect.y,
+            right: undefined,
+            transform: `translate(-50%, 0)`,
+            maxWidth: Math.min(maxWidth, wWidth),
+          });
+          break;
+        case "left":
+          setStyle(toolTip, {
+            top: rect.y + rect.height / 2,
+            left: undefined,
+            bottom: undefined,
+            right: rect.x,
+            transform: `translate(0, -50%)`,
+            maxWidth: Math.min(maxWidth, rect.x),
+          });
+          break;
+        case "bottom":
+          setStyle(toolTip, {
+            top: rect.y + rect.height,
+            left: rect.x + rect.width / 2,
+            bottom: undefined,
+            right: undefined,
+            transform: `translate(-50%, 0)`,
+            maxWidth: Math.min(maxWidth, wWidth),
+          });
+          break;
+        case "right":
+          setStyle(toolTip, {
+            top: rect.y + rect.height / 2,
+            left: rect.x + rect.width,
+            bottom: undefined,
+            right: undefined,
+            transform: `translate(0, -50%)`,
+            maxWidth: Math.min(maxWidth, wWidth - (rect.x + rect.width)),
+          });
+          break;
+        default:
+          break;
+      }
     }
   }, [originRef, direction, maxWidth, toolTipRef]);
 
@@ -89,16 +112,16 @@ export default function ToolTip({
 
   return (
     <Portal>
-      <span className="fixed pointer-events-none z-50" ref={toolTipRef}>
-        <span
+      <div className="fixed pointer-events-none z-50" ref={toolTipRef}>
+        <p
           className={cx(
-            "block m-2 py-1 px-2 rounded-md text-sm text-left bg-gray-900 text-white",
+            "m-2 py-1 px-2 rounded-md text-sm text-left bg-gray-900 text-white",
             className
           )}
         >
           {children}
-        </span>
-      </span>
+        </p>
+      </div>
     </Portal>
   );
 }
