@@ -6,6 +6,8 @@ import useResource from "hooks/useResource";
 
 export default function useAuth(fn = noop) {
   const auth = useResource(authResource);
-  fn(auth);
+  if (typeof window !== "undefined") {
+    fn(auth);
+  }
   return auth;
 }

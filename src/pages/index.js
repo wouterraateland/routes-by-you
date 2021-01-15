@@ -23,7 +23,7 @@ export default function Home() {
         />
       </Head>
       <nav className="flex justify-end p-2">
-        <Link href="/dashboard">
+        <Link href="/feed">
           <a className="text-blue-600 hover:underline font-bold">To app</a>
         </Link>
       </nav>

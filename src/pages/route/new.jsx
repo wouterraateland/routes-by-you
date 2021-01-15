@@ -2,14 +2,12 @@ import { v4 as uuidv4 } from "uuid";
 import cx from "classnames";
 import Router from "next/router";
 import { fetchRandomRouteName } from "utils/routes";
-import { redirectIfNotAuthenticated } from "utils/auth";
 import { fontByPoints, pointsToFont } from "utils/grades";
 import { supabase } from "utils/supabase";
 import { api } from "utils/api";
 import { between } from "utils/math";
 
 import { useEffect, useRef, useState } from "react";
-import useAuth from "hooks/useAuth";
 
 import Head from "next/head";
 import Cross from "components/icons/Cross";
@@ -28,19 +26,17 @@ function getPositionOnImage(event, { scale }) {
   };
 }
 
-export default function NewRoute() {
+export default function NewRoute({ auth }) {
   useEffect(() => import("pinch-zoom-element"), []);
   const pinchZoomRef = useRef();
   const imgRef = useRef();
-
-  const { user } = useAuth(redirectIfNotAuthenticated);
 
   const [route, setRoute] = useState({
     image: null,
     holds: [],
     name: "",
     description: "",
-    setter_id: user?.id,
+    setter_id: auth.user.id,
     grade: 500,
     location_id: null,
     location_string: "",
@@ -456,3 +452,7 @@ export default function NewRoute() {
     </>
   );
 }
+NewRoute.authPolicy = {
+  isAuthorized: (auth) => auth.user,
+  redirect: "/auth/login",
+};

@@ -14,7 +14,7 @@ export function redirectIfNotAuthenticated(auth, to = "/auth/login") {
   }
 }
 
-export function redirectIfAuthenticated(auth, to = "/dashboard") {
+export function redirectIfAuthenticated(auth, to = "/feed") {
   if (auth.user) {
     Router.replace(to);
   }

@@ -1,24 +1,23 @@
 import { supabase, getSupabaseResource } from "utils/supabase";
-import { redirectIfNotAuthenticated } from "utils/auth";
 import Router from "next/router";
 
 import { useMemo } from "react";
-import useAuth from "hooks/useAuth";
 import useResource from "hooks/useResource";
 
 import Head from "next/head";
 import Shell from "components/Shell";
 import Route from "components/Route";
 
-export default function Dashboard({ routes, error }) {
-  const { user } = useAuth(redirectIfNotAuthenticated);
-  const userId = user?.id;
+export default function Feed({ auth, routes, error }) {
   const profileResource = useMemo(
     () =>
-      getSupabaseResource(supabase.from("users").select("*").eq("id", userId), {
-        single: true,
-      }),
-    [userId]
+      getSupabaseResource(
+        supabase.from("users").select("*").eq("id", auth.user.id),
+        {
+          single: true,
+        }
+      ),
+    [auth.user.id]
   );
   const profile = useResource(profileResource);
   if (!profile.display_name) {
@@ -28,7 +27,7 @@ export default function Dashboard({ routes, error }) {
   return (
     <Shell>
       <Head>
-        <title>Dashboard | Routes by You</title>
+        <title>My feed | Routes by You</title>
       </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         {error ? (
@@ -42,6 +41,10 @@ export default function Dashboard({ routes, error }) {
     </Shell>
   );
 }
+Feed.authPolicy = {
+  isAuthorized: (auth) => auth.user,
+  redirect: "/auth/login",
+};
 
 export async function getServerSideProps() {
   const { data, error } = await supabase

@@ -4,11 +4,9 @@ import Router from "next/router";
 import { api } from "utils/api";
 import { supabase } from "utils/supabase";
 import { pointsToFont, pointsToHsl } from "utils/grades";
-import { redirectIfNotAuthenticated } from "utils/auth";
 import { copyTextToClipboard } from "utils/strings";
 
 import { useEffect, useState } from "react";
-import useAuth from "hooks/useAuth";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -22,10 +20,7 @@ import Button from "components/ui/Button";
 import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 
-export default function RepeatRoute({ route }) {
-  const { user } = useAuth(redirectIfNotAuthenticated);
-  const userId = user?.id;
-
+export default function RepeatRoute({ auth, route }) {
   const [shared, setShared] = useState(false);
   useEffect(() => {
     if (shared) {
@@ -34,7 +29,9 @@ export default function RepeatRoute({ route }) {
     }
   }, [shared]);
 
-  const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
+  const repeated = route.repeats.some(
+    (repeat) => repeat.user_id === auth?.user?.id
+  );
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
   const avgGrade =
     repeatsWithGrade.reduce((acc, repeat) => acc + repeat.grade, route.grade) /
@@ -176,7 +173,7 @@ export default function RepeatRoute({ route }) {
             ))}
           </div>
         </div>
-        {route.setter_id === userId && (
+        {route.setter_id === auth?.user?.id && (
           <div className="p-4 sm:p-0">
             <Button
               bgColor="red"

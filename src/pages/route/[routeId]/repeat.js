@@ -1,11 +1,9 @@
 import { api } from "utils/api";
-import { redirectIfNotAuthenticated } from "utils/auth";
 import { supabase } from "utils/supabase";
 import { fontByPoints, pointsToFont } from "utils/grades";
 
 import { useState } from "react";
 import { useRouter } from "next/router";
-import useAuth from "hooks/useAuth";
 
 import Head from "next/head";
 import Cross from "components/icons/Cross";
@@ -14,13 +12,12 @@ import Field from "components/ui/Field";
 import Input from "components/ui/Input";
 import StarRating from "components/StarRating";
 
-export default function RepeatRoute({ route }) {
+export default function RepeatRoute({ auth, route }) {
   const router = useRouter();
-  const { user } = useAuth(redirectIfNotAuthenticated);
 
   const { routeId } = router.query;
-  const upstreamRepeat = user
-    ? route.repeats.find((repeat) => repeat.user_id === user.id)
+  const upstreamRepeat = auth.user
+    ? route.repeats.find((repeat) => repeat.user_id === auth.user.id)
     : null;
   const [repeat, setRepeat] = useState(
     upstreamRepeat || {
@@ -157,6 +154,10 @@ export default function RepeatRoute({ route }) {
     </div>
   );
 }
+RepeatRoute.authPolicy = {
+  isAuthorized: (auth) => auth.user,
+  redirect: "/auth/login",
+};
 
 export async function getServerSideProps({ params }) {
   const { routeId } = params;

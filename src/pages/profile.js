@@ -1,8 +1,6 @@
 import { supabase, getSupabaseResource } from "utils/supabase";
-import { redirectIfNotAuthenticated } from "utils/auth";
 
 import { useMemo, useState } from "react";
-import useAuth from "hooks/useAuth";
 import useResource from "hooks/useResource";
 
 import Head from "next/head";
@@ -11,16 +9,18 @@ import Button from "components/ui/Button";
 import ImageInput from "components/ui/ImageInput";
 import Input from "components/ui/Input";
 import Field from "components/ui/Field";
+import Link from "next/link";
 
-export default function Profile() {
-  const { user } = useAuth(redirectIfNotAuthenticated);
-  const userId = user?.id;
+export default function Profile({ auth }) {
   const profileResource = useMemo(
     () =>
-      getSupabaseResource(supabase.from("users").select("*").eq("id", userId), {
-        single: true,
-      }),
-    [userId]
+      getSupabaseResource(
+        supabase.from("users").select("*").eq("id", auth.user.id),
+        {
+          single: true,
+        }
+      ),
+    [auth.user.id]
   );
   const profile = useResource(profileResource);
   const [userData, setUserData] = useState(profile);
@@ -90,16 +90,17 @@ export default function Profile() {
           )}
         </form>
         <div className="text-center">
-          <Button
-            type="button"
-            className="px-4 py-2 rounded-md text-white font-bold"
-            bgColor="red"
-            onClick={() => supabase.auth.signOut()}
-          >
-            Sign out
-          </Button>
+          <Link href="/auth/logout">
+            <a className="px-4 py-2 rounded-md text-white font-bold bg-red-600 hover:bg-red-700">
+              Sign out
+            </a>
+          </Link>
         </div>
       </div>
     </Shell>
   );
 }
+Profile.authPolicy = {
+  isAuthorized: (auth) => auth.user,
+  redirect: "/auth/login",
+};

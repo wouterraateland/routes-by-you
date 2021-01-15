@@ -28,6 +28,18 @@ export default class MyDocument extends Document {
           <meta name="application-name" content="Routes by You" />
           <meta name="msapplication-TileColor" content="#2563eb" />
           <meta name="theme-color" content="#bfdbfe" />
+          <meta name="description" content="Set and share your own boulders" />
+          <link rel="icon" href="/favicon.ico" />
+          <meta property="og:title" content="Routes by You" />
+          <meta
+            property="og:description"
+            content="Set and share your own boulders"
+          />
+          <meta property="og:url" content="https://routesbyyou.com" />
+          <meta
+            property="og:image"
+            content="https://routesbyyou.com/og-image.png"
+          />
         </Head>
         <body>
           <Main />

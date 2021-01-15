@@ -1,8 +1,6 @@
-import { redirectIfAuthenticated } from "utils/auth";
 import { supabase } from "utils/supabase";
 
 import { useState } from "react";
-import useAuth from "hooks/useAuth";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -12,8 +10,6 @@ import Input from "components/ui/Input";
 import Field from "components/ui/Field";
 
 export default function Register() {
-  useAuth((auth) => redirectIfAuthenticated(auth, "/profile"));
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -98,3 +94,7 @@ export default function Register() {
     </div>
   );
 }
+Register.authPolicy = {
+  isAuthorized: (auth) => !auth.user,
+  redirect: "/profile",
+};

@@ -10,7 +10,7 @@ import Person from "components/icons/Person";
 import Flash from "components/icons/Flash";
 
 const tabs = [
-  { href: "/dashboard", Icon: Home, label: "Home" },
+  { href: "/feed", Icon: Home, label: "Home" },
   { href: "/profile", Icon: Person, label: "Profile" },
   { href: "/route/new", Icon: Flash, label: "New" },
 ];

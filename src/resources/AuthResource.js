@@ -6,14 +6,14 @@ export default class AuthResource extends ObservableResource {
   constructor() {
     super(
       new Promise((resolve) => {
-        supabase.auth.refreshSession().then(({ data: session, user }) => {
+        supabase.auth.refreshSession().then(() => {
+          const session = supabase.auth.session();
           this.persistSession(session);
-          resolve({ session, user });
+          resolve({ session, user: session?.user });
         });
       })
     );
     supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(event, session);
       this.persistSession(session);
       this.onNext({ session, user: session?.user ?? null });
     });
