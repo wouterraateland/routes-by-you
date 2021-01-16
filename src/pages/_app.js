@@ -8,6 +8,7 @@ import ErrorBoundary from "containers/ErrorBoundary";
 import SSRSuspense from "containers/SSRSuspense";
 
 import Head from "next/head";
+import Notifications from "components/notifications";
 import Loader from "components/ui/Loader";
 
 function AuthBoundary({ Component, pageProps }) {
@@ -48,6 +49,7 @@ export default function MyApp({ Component, pageProps }) {
         ) : (
           <Component {...pageProps} />
         )}
+        <Notifications />
       </SSRSuspense>
     </ErrorBoundary>
   );
