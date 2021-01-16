@@ -9,8 +9,8 @@ import Flash from "components/icons/Flash";
 
 const tabs = [
   { href: "/feed", Icon: Home, label: "Home" },
-  { href: "/profile", Icon: Person, label: "Profile" },
   { href: "/route/new", Icon: Flash, label: "New" },
+  { href: "/profile", Icon: Person, label: "Profile" },
 ];
 
 export default function Shell({ children }) {

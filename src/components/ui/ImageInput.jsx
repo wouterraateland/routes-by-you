@@ -43,45 +43,44 @@ export default function ImageInput({
 
   return (
     <div className="space-y-4">
-      <label
-        ref={containerRef}
-        className={cx(
-          "block relative flex-shrink-0",
-          { "cursor-pointer": !disabled },
-          className
-        )}
-        {...props}
-      >
-        {value ? (
-          <>
+      <div className={cx("relative", className)}>
+        <label
+          ref={containerRef}
+          className={cx(
+            "relative block flex-shrink-0 overflow-hidden",
+            { "cursor-pointer": !disabled },
+            className
+          )}
+          {...props}
+        >
+          {value ? (
             <img
-              className={cx(
-                "absolute inset-0 w-full h-full object-cover",
-                className
-              )}
+              className="absolute inset-0 w-full h-full object-cover"
               src={value}
             />
-            <Button
-              type="button"
-              className="absolute top-2 right-2 p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
-              onClick={async (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                await onDelete();
-              }}
-              disabled={disabled}
-              hint="Delete image"
-            >
-              <Cross className="h-4" />
-            </Button>
-          </>
-        ) : (
-          disabled !== true && (
-            <Camera className="absolute inset-0 m-auto h-4" />
-          )
+          ) : (
+            disabled !== true && (
+              <Camera className="absolute inset-0 m-auto h-4" />
+            )
+          )}
+          <HiddenImageInput onChange={_onChange} disabled={disabled} />
+        </label>
+        {value && (
+          <Button
+            type="button"
+            className="absolute top-2 right-2 p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-75 text-white"
+            onClick={async (event) => {
+              event.stopPropagation();
+              event.preventDefault();
+              await onDelete();
+            }}
+            disabled={disabled}
+            hint="Delete image"
+          >
+            <Cross className="h-4" />
+          </Button>
         )}
-        <HiddenImageInput onChange={_onChange} disabled={disabled} />
-      </label>
+      </div>
       {error ? (
         <span className="text-xs text-red-500">{error}</span>
       ) : (

@@ -17,7 +17,10 @@ export default function RepeatThumb({ repeat }) {
             </a>
           </Link>
         )}
-        <div className="space-y-1 mr-auto">
+        <div
+          className="flex flex-col space-y-1 mr-auto justify-center"
+          style={{ minHeight: 40 }}
+        >
           <p className="leading-4">
             <strong className="inline-block">
               <Link href={`/user/${repeat.user.id}`}>

@@ -135,8 +135,8 @@ export default function NewRoute({ auth }) {
       </Head>
       {route.image ? (
         <div className="absolute inset-0 h-screen flex flex-col bg-gray-50">
-          <div className="relative z-10 p-2 border-b bg-white">
-            <div className="max-w-xl mx-auto flex items-center justify-between">
+          <div className="sticky top-0 pt-safe z-10 border-b bg-white">
+            <div className="max-w-xl mx-auto flex items-center justify-between p-2">
               {step === 0 && (
                 <>
                   <Button
@@ -214,8 +214,17 @@ export default function NewRoute({ auth }) {
                     bgColor="blue"
                     className="px-3 py-1 rounded-md font-bold text-white"
                     onClick={async () => {
+                      const { url } = await api.post("upload", {
+                        body: {
+                          key: `${auth.user.id}/avatar-${Date.now()}.jpg`,
+                          data: route.image,
+                        },
+                      });
                       const createdRoute = await api.post("route", {
-                        body: route,
+                        body: {
+                          ...route,
+                          image: url,
+                        },
                       });
                       Router.replace(`/route/${createdRoute.id}`);
                     }}

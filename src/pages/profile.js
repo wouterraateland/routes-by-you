@@ -1,3 +1,4 @@
+import { api } from "utils/api";
 import { supabase, getSupabaseResource } from "utils/supabase";
 
 import { useMemo, useState } from "react";
@@ -50,10 +51,23 @@ export default function Profile({ auth }) {
           onSubmit={updateUserData}
         >
           <ImageInput
-            className="mx-auto w-48 h-48 object-cover rounded-full bg-gray-100"
+            className="w-48 h-48 object-cover rounded-full bg-gray-100"
             value={userData.avatar}
-            onChange={(avatar) =>
-              setUserData((prev) => ({ ...prev, avatar, touched: true }))
+            onChange={({ data }) =>
+              api
+                .post("upload", {
+                  body: {
+                    key: `${auth.user.id}/avatar-${Date.now()}.jpg`,
+                    data,
+                  },
+                })
+                .then(({ url }) =>
+                  setUserData((prev) => ({
+                    ...prev,
+                    avatar: url,
+                    touched: true,
+                  }))
+                )
             }
             onDelete={() =>
               setUserData((prev) => ({
@@ -71,10 +85,10 @@ export default function Profile({ auth }) {
               type="text"
               placeholder="Your name"
               value={userData.display_name}
-              onChange={(e) =>
+              onChange={(event) =>
                 setUserData((prev) => ({
                   ...prev,
-                  display_name: e.target.value,
+                  display_name: event.target.value,
                   touched: true,
                 }))
               }
@@ -96,6 +110,17 @@ export default function Profile({ auth }) {
             </a>
           </Link>
         </div>
+        <p className="text-center">
+          Questions, feedback?{" "}
+          <a
+            className="text-blue-600"
+            href="mailto:wouterraateland@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Contact
+          </a>
+        </p>
       </div>
     </Shell>
   );

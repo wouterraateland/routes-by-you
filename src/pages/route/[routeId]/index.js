@@ -191,6 +191,10 @@ export default function RepeatRoute({ auth, route }) {
     </div>
   );
 }
+RepeatRoute.authPolicy = {
+  isAuthorized: (auth) => auth.user,
+  redirect: "/auth/login",
+};
 
 export async function getServerSideProps({ params }) {
   const { routeId } = params;
