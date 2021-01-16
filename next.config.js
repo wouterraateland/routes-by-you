@@ -20,7 +20,7 @@ module.exports = {
     NEXT_PUBLIC_SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
   },
   images: {
-    domains: [],
+    domains: ["routes-by-you.s3.eu-central-1.amazonaws.com"],
   },
   basePath,
 };
