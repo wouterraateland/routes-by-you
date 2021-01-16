@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Home from "components/icons/Home";
 import Person from "components/icons/Person";
-import Flash from "components/icons/Flash";
+import RoutesByYou from "components/icons/RoutesByYou";
 
 const tabs = [
   { href: "/feed", Icon: Home, label: "Home" },
-  { href: "/route/new", Icon: Flash, label: "New" },
+  { href: "/route/new", Icon: RoutesByYou, label: "New" },
   { href: "/profile", Icon: Person, label: "Profile" },
 ];
 
