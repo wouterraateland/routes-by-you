@@ -14,6 +14,7 @@ import Cross from "components/icons/Cross";
 import Random from "components/icons/Random";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
+import FlyOut from "components/ui/FlyOut";
 import ImageInput from "components/ui/ImageInput";
 import Input from "components/ui/Input";
 import Textarea from "components/ui/Textarea";
@@ -105,6 +106,8 @@ export default function NewRoute({ auth }) {
     }
   }, [route.image, step]);
 
+  const suggestionsOriginRef = useRef();
+  const [focus, setFocus] = useState(false);
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (route.location_id) {
@@ -112,13 +115,13 @@ export default function NewRoute({ auth }) {
           .from("locations")
           .select("*")
           .eq("id", route.location_id);
-        setSuggestedLocations(data);
+        setSuggestedLocations(data || []);
       } else if (route.location_string) {
         const { data } = await supabase
           .from("locations")
           .select("*")
           .ilike("name", `%${route.location_string}%`);
-        setSuggestedLocations(data);
+        setSuggestedLocations(data || []);
       } else {
         setSuggestedLocations([]);
       }
@@ -151,7 +154,9 @@ export default function NewRoute({ auth }) {
                   >
                     Back
                   </Button>
-                  <p>Select holds</p>
+                  <p className="rounded-xl text-center bg-blue-500 text-white font-bold px-2">
+                    Select holds
+                  </p>
                   <Button
                     className="px-3 py-1 rounded-md hover:bg-gray-100 font-bold"
                     onClick={() => setStep(1)}
@@ -169,7 +174,9 @@ export default function NewRoute({ auth }) {
                   >
                     Back
                   </Button>
-                  <p>Select starting hold(s)</p>
+                  <p className="rounded-xl text-center bg-blue-500 text-white font-bold px-2">
+                    Select starting hold(s)
+                  </p>
                   <Button
                     className="px-3 py-1 rounded-md hover:bg-gray-100 font-bold"
                     onClick={() => setStep(2)}
@@ -189,7 +196,9 @@ export default function NewRoute({ auth }) {
                   >
                     Back
                   </Button>
-                  <p>Select finishing hold</p>
+                  <p className="rounded-xl text-center bg-blue-500 text-white font-bold px-2">
+                    Select finishing hold
+                  </p>
                   <Button
                     className="px-3 py-1 rounded-md hover:bg-gray-100 font-bold"
                     onClick={() => setStep(3)}
@@ -301,45 +310,53 @@ export default function NewRoute({ auth }) {
                 </select>
               </Field>
               <Field label="Location">
-                {route.location_id ? (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      {location.logo && (
-                        <img
-                          src={location.logo}
-                          className="w-8 h-8 rounded-full shadow-md"
-                          alt={location.name}
-                        />
-                      )}
-                      <span>{location.name}</span>
+                <div ref={suggestionsOriginRef}>
+                  {route.location_id ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {location.logo && (
+                          <img
+                            src={location.logo}
+                            className="w-8 h-8 rounded-full shadow-md"
+                            alt={location.name}
+                          />
+                        )}
+                        <span>{location.name}</span>
+                      </div>
+                      <Button
+                        onClick={() =>
+                          setRoute((route) => ({ ...route, location_id: null }))
+                        }
+                      >
+                        <Cross className="h-4" />
+                      </Button>
                     </div>
-                    <Button
-                      onClick={() =>
-                        setRoute((route) => ({ ...route, location_id: null }))
+                  ) : (
+                    <Input
+                      required
+                      value={route.location_string}
+                      onChange={(event) =>
+                        setRoute((route) => ({
+                          ...route,
+                          location_string: event.target.value,
+                        }))
                       }
-                    >
-                      <Cross className="h-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Input
-                    required
-                    value={route.location_string}
-                    onChange={(event) =>
-                      setRoute((route) => ({
-                        ...route,
-                        location_string: event.target.value,
-                      }))
-                    }
-                  />
-                )}
-              </Field>
-              {!route.location_id && suggestedLocations.length > 0 && (
-                <div>
+                      onFocus={() => setFocus(true)}
+                      onBlur={() => setTimeout(() => setFocus(false))}
+                    />
+                  )}
+                </div>
+                <FlyOut
+                  originRef={suggestionsOriginRef}
+                  isOpen={
+                    !route.location_id && suggestedLocations.length > 0 && focus
+                  }
+                  onClose={() => {}}
+                >
                   {suggestedLocations.map((location) => (
                     <Button
                       key={location.id}
-                      className="flex items-center space-x-2 pr-2 mr-2 mb-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600"
+                      className="flex w-full items-center space-x-2 p-2 text-left hover:bg-gray-100 truncate"
                       onClick={() =>
                         setRoute((route) => ({
                           ...route,
@@ -347,20 +364,18 @@ export default function NewRoute({ auth }) {
                         }))
                       }
                     >
-                      {location.logo ? (
+                      {location.logo && (
                         <img
                           src={location.logo}
                           className="w-6 h-6 rounded-full"
                           alt={location.name}
                         />
-                      ) : (
-                        <span className="w-px h-px" />
                       )}
                       <span>{location.name}</span>
                     </Button>
                   ))}
-                </div>
-              )}
+                </FlyOut>
+              </Field>
             </div>
           ) : (
             <pinch-zoom ref={pinchZoomRef} class="flex flex-grow">

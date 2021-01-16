@@ -18,9 +18,11 @@ export default function Shell({ children }) {
 
   return (
     <div className="flex flex-col min-h-screen sm:flex-col-reverse bg-gray-50">
-      <div className="w-full flex-grow">{children}</div>
+      <div className="w-full flex-grow pt-safe sm:pt-0 sm:pb-safe">
+        {children}
+      </div>
       <div className="sticky bottom-0 sm:top-0 sm:bottom-auto left-0 right-0">
-        <nav className="max-w-2xl mx-auto pb-safe pl-safe pr-safe sm:rounded-b-md shadow-md bg-white border-t">
+        <nav className="max-w-2xl mx-auto pb-safe sm:pt-safe sm:pb-0 pl-safe pr-safe sm:rounded-b-md shadow-md bg-white border-t">
           <div className="flex items-center justify-around">
             {tabs.map(({ href, Icon, label }) => (
               <Link href={href} key={href}>
