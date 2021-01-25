@@ -1,4 +1,6 @@
 import cx from "classnames";
+import Router from "next/router";
+
 import { fontByPoints, pointsToFont } from "utils/grades";
 
 import { useState } from "react";
@@ -15,17 +17,21 @@ export default function RouteFilters({ filters, setFilters }) {
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-black">Your feed</h2>
         <div className="flex items-center space-x-2">
-          <Button className="p-1 rounded-md hover:bg-gray-100" hint="Search">
-            <Loop className="h-4" />
+          <Button
+            className="p-2 rounded-md hover:bg-gray-100"
+            hint="Search"
+            onClick={() => Router.push("/search")}
+          >
+            <Loop className="h-6" />
           </Button>
           <Button
-            className={cx("p-1 rounded-md hover:bg-gray-100", {
+            className={cx("p-2 rounded-md hover:bg-gray-100", {
               "text-blue-600": expanded,
             })}
             onClick={() => setExpanded(!expanded)}
             hint="Filter"
           >
-            <Filter className="h-4" filled={expanded} />
+            <Filter className="h-6" filled={expanded} />
           </Button>
         </div>
       </div>
@@ -43,7 +49,6 @@ export default function RouteFilters({ filters, setFilters }) {
                 }))
               }
             >
-              <option value="">From</option>
               {Object.keys(fontByPoints)
                 .sort()
                 .map((points) => (
@@ -67,7 +72,6 @@ export default function RouteFilters({ filters, setFilters }) {
                 }))
               }
             >
-              <option value="">To</option>
               {Object.keys(fontByPoints)
                 .sort()
                 .map((points) => (

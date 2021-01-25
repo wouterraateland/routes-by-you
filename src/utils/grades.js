@@ -28,6 +28,11 @@ export const fontByPoints = {
   867: "8C",
   883: "8C+",
   900: "9A",
+  917: "9A+",
+  933: "9B",
+  950: "9B+",
+  967: "9C",
+  983: "9C+",
 };
 
 export const fontToPoints = (font) =>
