@@ -11,6 +11,7 @@ import PagedResource from "resources/PagedResource";
 import Head from "next/head";
 import Loader from "components/ui/Loader";
 import Shell from "components/Shell";
+import RouteFilters from "components/RouteFilters";
 import FilteredRoutes from "components/FilteredRoutes";
 import SSRSuspense from "containers/SSRSuspense";
 import ErrorBoundary from "containers/ErrorBoundary";
@@ -38,10 +39,12 @@ export default function Feed({ auth }) {
     max_grade: undefined,
     setter_id: undefined,
     location_id: undefined,
+    show_repeated: true,
+    show_not_repeated: true,
     q: "",
   });
   const filter = Object.keys(params)
-    .filter((key) => params[key] !== undefined)
+    .filter((key) => Boolean(params[key]))
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   const routesResource = routesCache.read(filter, () => {
@@ -65,9 +68,10 @@ export default function Feed({ auth }) {
         <title>My feed | Routes by You</title>
       </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
+        <RouteFilters filters={params} setFilters={setParams} />
         <ErrorBoundary>
           <SSRSuspense fallback={<Loader className="text-blue" />}>
-            <FilteredRoutes routesResource={routesResource} />
+            <FilteredRoutes routesResource={routesResource} filters={params} />
           </SSRSuspense>
         </ErrorBoundary>
       </div>
