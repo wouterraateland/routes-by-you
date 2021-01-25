@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import { pointsToFont, pointsToHsl } from "utils/grades";
 
 import Link from "next/link";
+import Avatar from "components/ui/Avatar";
 
 export default function RepeatThumb({ repeat }) {
   return (
@@ -10,9 +11,10 @@ export default function RepeatThumb({ repeat }) {
         {repeat.user.avatar && (
           <Link href={`/user/${repeat.user.id}`}>
             <a className="flex-shrink-0">
-              <img
-                className="w-10 h-10 rounded-full"
+              <Avatar
+                className="w-10 h-10"
                 src={repeat.user.avatar}
+                alt={repeat.user.display_name}
               />
             </a>
           </Link>

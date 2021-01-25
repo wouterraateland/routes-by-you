@@ -32,11 +32,9 @@ export default function ResetPassword({ auth }) {
   return (
     <div className="min-h-screen flex flex-col space-y-4 items-center justify-center bg-gray-100">
       <Head>
-        <title>Reset password | OrderMe</title>
+        <title>Reset password | Routes by You</title>
       </Head>
-      <h1>
-        <img className="h-8 mx-auto" src="/logo-orderme.svg" alt="OrderMe" />
-      </h1>
+      <h1 className="text-4xl font-black">Routes by You</h1>
       <Card elevation="sm" className="w-full max-w-xs p-4">
         <Form onSubmit={onSubmit} className="space-y-4">
           <h2 className="text-xl font-bold">Reset password</h2>

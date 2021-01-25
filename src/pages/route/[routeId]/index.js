@@ -15,9 +15,10 @@ import Check from "components/icons/Check";
 import Cross from "components/icons/Cross";
 import Repeat from "components/icons/Repeat";
 import Share from "components/icons/Share";
-import StarRating from "components/StarRating";
+import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import RouteImage from "components/RouteImage";
+import StarRating from "components/StarRating";
 import RepeatThumb from "components/RepeatThumb";
 
 export default function ViewRoute({ auth, route }) {
@@ -61,9 +62,10 @@ export default function ViewRoute({ auth, route }) {
               {route.setter.avatar && (
                 <Link href={`/user/${route.setter.id}`}>
                   <a>
-                    <img
-                      className="w-10 h-10 rounded-full"
+                    <Avatar
+                      className="w-10 h-10"
                       src={route.setter.avatar}
+                      alt={route.setter.display_name}
                     />
                   </a>
                 </Link>

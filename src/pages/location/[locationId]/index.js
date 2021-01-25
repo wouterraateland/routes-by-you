@@ -2,6 +2,7 @@ import { supabase } from "utils/supabase";
 import { cleanUrl } from "utils/strings";
 
 import Head from "next/head";
+import Avatar from "components/ui/Avatar";
 import Card from "components/ui/Card";
 import Shell from "components/Shell";
 import Route from "components/Route";
@@ -14,13 +15,11 @@ export default function LocationPage({ location }) {
       </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <div className="p-4 space-y-4 text-center">
-          {location.logo && (
-            <img
-              className="mx-auto w-24 h-24 rounded-full shadow-md"
-              src={location.logo}
-              alt={location.name}
-            />
-          )}
+          <Avatar
+            className="mx-auto w-24 h-24 shadow-md"
+            src={location.avatar}
+            alt={location.name}
+          />
           <div>
             <h1 className="text-xl font-bold">{location.name}</h1>
             {location.url && (

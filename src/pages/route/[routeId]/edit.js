@@ -10,6 +10,7 @@ import { useFormState } from "react-use-form-state";
 
 import Head from "next/head";
 import Cross from "components/icons/Cross";
+import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
 import Form from "components/ui/Form";
@@ -119,13 +120,11 @@ export default function EditRoute({ route }) {
                 location && (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      {location.logo && (
-                        <img
-                          src={location.logo}
-                          className="w-8 h-8 rounded-full shadow-md"
-                          alt={location.name}
-                        />
-                      )}
+                      <Avatar
+                        src={location.logo}
+                        alt={location.name}
+                        className="w-8 h-8 shadow-md"
+                      />
                       <span>{location.name}</span>
                     </div>
                     <Button
@@ -162,13 +161,11 @@ export default function EditRoute({ route }) {
                   className="flex w-full items-center space-x-2 p-2 text-left hover:bg-gray-100 truncate"
                   onClick={() => formState.setField("location_id", location.id)}
                 >
-                  {location.logo && (
-                    <img
-                      src={location.logo}
-                      className="w-6 h-6 rounded-full"
-                      alt={location.name}
-                    />
-                  )}
+                  <Avatar
+                    className="w-6 h-6 rounded-full"
+                    src={location.logo}
+                    alt={location.name}
+                  />
                   <span>{location.name}</span>
                 </Button>
               ))}

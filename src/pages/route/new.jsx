@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import Cross from "components/icons/Cross";
 import Random from "components/icons/Random";
+import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
 import FlyOut from "components/ui/FlyOut";
@@ -363,13 +364,11 @@ export default function NewRoute({ auth }) {
                         }))
                       }
                     >
-                      {location.logo && (
-                        <img
-                          src={location.logo}
-                          className="w-6 h-6 rounded-full"
-                          alt={location.name}
-                        />
-                      )}
+                      <Avatar
+                        src={location.logo}
+                        alt={location.name}
+                        className="w-6 h-6 rounded-full"
+                      />
                       <span>{location.name}</span>
                     </Button>
                   ))}
