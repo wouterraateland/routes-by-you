@@ -18,10 +18,13 @@ import Button from "components/ui/Button";
 import FlyOut from "components/ui/FlyOut";
 import StarRating from "components/StarRating";
 
+const DESCRIPTION_PREVIEW_LENGTH = 100;
+
 export default function RouteSummary({ route }) {
   const actionsOriginRef = useRef();
   const { user } = useAuth();
 
+  const [expanded, setExpanded] = useState(false);
   const [reportedBy, setReportedBy] = useState(
     route.reports.map((report) => report.user_id)
   );
@@ -52,16 +55,18 @@ export default function RouteSummary({ route }) {
             <h2 className="text-2xl font-black">{route.name}</h2>
           </div>
           {route.repeats.length > 0 ? (
-            <div className="flex space-x-2 items-center text-gray-500 text-sm">
-              <span>
+            <div className="flex flex-wrap -mx-1 items-center text-gray-500 text-sm">
+              <span className="mx-1">
                 {route.repeats.length} repeat
                 {route.repeats.length === 1 ? "" : "s"}
               </span>
               {repeatsWithRating.length > 0 && (
-                <StarRating value={avgRating} className="h-4" />
+                <div className="mx-1">
+                  <StarRating value={avgRating} className="h-4" />
+                </div>
               )}
               {repeatsWithVideo.length > 0 && (
-                <span className="flex items-center space-x-1">
+                <span className="flex items-center space-x-1 mx-1">
                   <Camera filled className="h-3" />
                   <span>
                     {repeatsWithVideo.length} video
@@ -152,7 +157,24 @@ export default function RouteSummary({ route }) {
           )}
         </FlyOut>
       </div>
-      {route.description && <p className="py-2">{route.description}</p>}
+      {route.description &&
+        (route.description.length > DESCRIPTION_PREVIEW_LENGTH ? (
+          <p className="py-2">
+            {expanded
+              ? route.description
+              : `${route.description.slice(0, DESCRIPTION_PREVIEW_LENGTH)}... `}
+            {!expanded && (
+              <Button
+                className="text-gray-500"
+                onClick={() => setExpanded(true)}
+              >
+                More
+              </Button>
+            )}
+          </p>
+        ) : (
+          <p className="py-2">{route.description}</p>
+        ))}
       <p className="text-xs text-gray-400 uppercase">
         {formatDistanceToNow(new Date(route.created_at))} ago
       </p>

@@ -19,6 +19,7 @@ import FlyOut from "components/ui/FlyOut";
 import ImageInput from "components/ui/ImageInput";
 import Input from "components/ui/Input";
 import Textarea from "components/ui/Textarea";
+import RouteSettingTutorial from "components/RouteSettingTutorial";
 
 function getPositionOnImage(event, { scale }) {
   const rect = event.target.getBoundingClientRect();
@@ -473,6 +474,7 @@ export default function NewRoute({ auth }) {
           />
         </div>
       )}
+      <RouteSettingTutorial />
     </>
   );
 }

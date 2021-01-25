@@ -1,15 +1,33 @@
-import { storageResourceCache } from "resources";
+import { useCallback, useEffect, useState } from "react";
 
-import useResource from "./useResource";
-import { useMemo } from "react";
+const getLocalStorage = (key, fallback) => {
+  if (typeof localStorage === "undefined") {
+    return fallback;
+  }
+  const value = localStorage.getItem(key);
+  return value ? JSON.parse(value) : fallback;
+};
 
-export default function useLocallyStoredState(key, initialValue, options) {
-  const resource = useMemo(
-    () => storageResourceCache.get({ key, initialValue, options }),
-    [key, initialValue, options]
+const setLocalStorage = (key, value) =>
+  typeof localStorage !== "undefined"
+    ? localStorage.setItem(key, JSON.stringify(value))
+    : undefined;
+
+export default function useLocallyStoredState({ key, initialValue }) {
+  const [state, _setState] = useState(getLocalStorage(key, initialValue));
+  const setState = useCallback(
+    (v) =>
+      _setState((state) => {
+        const newState = typeof v === "function" ? v(state) : v;
+        setLocalStorage(key, newState);
+        return newState;
+      }),
+    [key]
   );
-  const state = useResource(resource);
-  const setState = (v) => resource.setState(v);
+
+  useEffect(() => {
+    _setState(getLocalStorage(key, initialValue));
+  }, [key, initialValue]);
 
   return [state, setState];
 }

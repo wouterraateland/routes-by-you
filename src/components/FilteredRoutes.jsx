@@ -1,13 +1,11 @@
 import { api } from "utils/api";
-import { Cache } from "utils/caching";
 
 import AsyncResource from "resources/AsyncResource";
 
 import Route from "components/Route";
 
-const cache = new Cache();
-
 export default function FilteredRoutes({
+  cache,
   minGrade,
   maxGrade,
   setterId,
@@ -19,6 +17,8 @@ export default function FilteredRoutes({
     max_grade: maxGrade,
     setter_id: setterId,
     location_id: locationId,
+    page: 0,
+    limit: 10,
     q,
   };
   const query = Object.keys(params)

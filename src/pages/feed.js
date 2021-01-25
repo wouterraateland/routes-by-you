@@ -1,4 +1,5 @@
 import { supabase, getSupabaseResource } from "utils/supabase";
+import { Cache } from "utils/caching";
 import Router from "next/router";
 
 import { useMemo } from "react";
@@ -12,6 +13,7 @@ import SSRSuspense from "containers/SSRSuspense";
 import ErrorBoundary from "containers/ErrorBoundary";
 
 export default function Feed({ auth }) {
+  const cache = useMemo(() => new Cache(), []);
   const profileResource = useMemo(
     () =>
       getSupabaseResource(
@@ -35,7 +37,7 @@ export default function Feed({ auth }) {
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <ErrorBoundary>
           <SSRSuspense fallback={<Loader className="text-blue" />}>
-            <FilteredRoutes />
+            <FilteredRoutes cache={cache} />
           </SSRSuspense>
         </ErrorBoundary>
       </div>
