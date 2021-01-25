@@ -1,34 +1,22 @@
-import { api } from "utils/api";
+import useResource from "hooks/useResource";
 
-import AsyncResource from "resources/AsyncResource";
-
+import InfiniteList from "components/ui/InfiniteList";
 import Route from "components/Route";
 
-export default function FilteredRoutes({
-  cache,
-  minGrade,
-  maxGrade,
-  setterId,
-  locationId,
-  q,
-}) {
-  const params = {
-    min_grade: minGrade,
-    max_grade: maxGrade,
-    setter_id: setterId,
-    location_id: locationId,
-    page: 0,
-    limit: 10,
-    q,
-  };
-  const query = Object.keys(params)
-    .filter((key) => params[key] !== undefined)
-    .map((key) => `${key}=${params[key]}`)
-    .join("&");
-  const routesResource = cache.read(
-    "",
-    () => new AsyncResource(api.get(`routes?${query}`))
+const renderRoute = (route) => <Route key={route.id} route={route} />;
+
+export default function FilteredRoutes({ routesResource }) {
+  const routes = useResource(routesResource);
+  return (
+    <InfiniteList
+      items={routes}
+      renderItem={renderRoute}
+      pageSize={10}
+      loadPage={
+        routesResource.hasNext
+          ? () => routesResource.fetchNextPage()
+          : undefined
+      }
+    />
   );
-  const routes = routesResource.read();
-  return routes.map((route) => <Route key={route.id} route={route} />);
 }

@@ -1,9 +1,12 @@
-import { supabase, getSupabaseResource } from "utils/supabase";
-import { Cache } from "utils/caching";
 import Router from "next/router";
 
-import { useMemo } from "react";
+import { supabase, getSupabaseResource } from "utils/supabase";
+import { api } from "utils/api";
+import { routesCache } from "utils/routes";
+
+import { useEffect, useMemo, useRef, useState } from "react";
 import useResource from "hooks/useResource";
+import PagedResource from "resources/PagedResource";
 
 import Head from "next/head";
 import Loader from "components/ui/Loader";
@@ -13,7 +16,6 @@ import SSRSuspense from "containers/SSRSuspense";
 import ErrorBoundary from "containers/ErrorBoundary";
 
 export default function Feed({ auth }) {
-  const cache = useMemo(() => new Cache(), []);
   const profileResource = useMemo(
     () =>
       getSupabaseResource(
@@ -29,6 +31,34 @@ export default function Feed({ auth }) {
     Router.replace("/profile");
   }
 
+  const freshRef = useRef(false);
+  const [params, setParams] = useState({
+    max_date: routesCache.maxDate,
+    min_grade: undefined,
+    max_grade: undefined,
+    setter_id: undefined,
+    location_id: undefined,
+    q: "",
+  });
+  const filter = Object.keys(params)
+    .filter((key) => params[key] !== undefined)
+    .map((key) => `${key}=${params[key]}`)
+    .join("&");
+  const routesResource = routesCache.read(filter, () => {
+    freshRef.current = true;
+    return new PagedResource((page) =>
+      api
+        .get(`routes?${filter}&page=${page}&limit=10`)
+        .then((data) => ({ data, hasNext: data.length > 0 }))
+    );
+  });
+
+  useEffect(() => {
+    if (!freshRef.current) {
+      routesResource.refresh();
+    }
+  }, []);
+
   return (
     <Shell>
       <Head>
@@ -37,7 +67,7 @@ export default function Feed({ auth }) {
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
         <ErrorBoundary>
           <SSRSuspense fallback={<Loader className="text-blue" />}>
-            <FilteredRoutes cache={cache} />
+            <FilteredRoutes routesResource={routesResource} />
           </SSRSuspense>
         </ErrorBoundary>
       </div>

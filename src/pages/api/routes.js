@@ -15,6 +15,10 @@ export default async (req, res) => {
     `
   );
 
+  if (req.query.max_date) {
+    query = query.lte("created_at", req.query.max_date);
+  }
+
   if (req.query.setter_id) {
     query = query.eq("setter_id", req.query.setter_id);
   }
@@ -38,7 +42,7 @@ export default async (req, res) => {
 
   query = query
     .order("created_at", { ascending: false })
-    .range(page * limit, (page + 1) * limit);
+    .range(page * limit, (page + 1) * limit - 1);
 
   const { data: routes, error } = await query;
 

@@ -1,4 +1,5 @@
 import { api } from "utils/api";
+import { Cache } from "utils/caching";
 import { capitalize } from "utils/strings";
 
 export async function fetchRandomRouteName() {
@@ -9,3 +10,6 @@ export async function fetchRandomRouteName() {
 
   return capitalize(`${color.color_name} ${appliance.equipment}`.toLowerCase());
 }
+
+export const routesCache = new Cache();
+routesCache.maxDate = new Date().toISOString();

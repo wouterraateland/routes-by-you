@@ -18,7 +18,7 @@ export default async (req, res) => {
 
   query = query
     .order("created_at", { ascending: false })
-    .range(page * limit, (page + 1) * limit);
+    .range(page * limit, (page + 1) * limit - 1);
 
   const { data: locations, error } = await query;
 
