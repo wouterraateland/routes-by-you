@@ -33,6 +33,9 @@ export const fontByPoints = {
 export const fontToPoints = (font) =>
   Object.entries(fontByPoints).find((entry) => entry[1] === font)?.[0];
 export const pointsToFont = (points) =>
-  Object.entries(fontByPoints).find((entry) => entry[0] >= points)?.[1];
+  points
+    ? Object.entries(fontByPoints).find((entry) => entry[0] >= points)?.[1]
+    : "?";
 
-export const pointsToHsl = (points) => `hsl(${150 - points / 4}deg, 100%, 50%)`;
+export const pointsToHsl = (points) =>
+  points ? `hsl(${150 - points / 4}deg, 100%, 50%)` : "hsl(0deg, 0%, 50%)";

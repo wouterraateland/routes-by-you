@@ -14,7 +14,7 @@ export default async (req, res) => {
     description: req.body.description,
     holds: req.body.holds,
     image: req.body.image,
-    grade: between(100, 1000)(req.body.grade || 100),
+    grade: req.body.grade ? between(100, 1000)(req.body.grade || 100) : null,
     location_id: req.body.location_id,
     location_string: req.body.location_string,
   };

@@ -238,7 +238,8 @@ export default function NewRoute({ auth }) {
                       Router.replace(`/route/${createdRoute.id}`);
                     }}
                     disabled={
-                      !route.name || !route.location_string || !route.grade
+                      !route.name ||
+                      (!route.location_string && !route.location_id)
                     }
                   >
                     Publish
@@ -300,6 +301,7 @@ export default function NewRoute({ auth }) {
                     }))
                   }
                 >
+                  <option value="">?</option>
                   {Object.keys(fontByPoints)
                     .sort()
                     .map((points) => (

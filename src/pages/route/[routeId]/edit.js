@@ -81,8 +81,8 @@ export default function EditRoute({ route }) {
               }}
               disabled={
                 !formState.values.name ||
-                !formState.values.location_string ||
-                !formState.values.grade
+                (!formState.values.location_string &&
+                  !formState.values.location_id)
               }
             >
               Save
@@ -107,6 +107,7 @@ export default function EditRoute({ route }) {
               required
               {...select("grade")}
             >
+              <option value="">?</option>
               {Object.keys(fontByPoints)
                 .sort()
                 .map((points) => (
