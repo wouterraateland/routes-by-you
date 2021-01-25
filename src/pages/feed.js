@@ -9,13 +9,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useResource from "hooks/useResource";
 import PagedResource from "resources/PagedResource";
 
+import SSRSuspense from "containers/SSRSuspense";
+import ErrorBoundary from "containers/ErrorBoundary";
+
 import Head from "next/head";
 import Loader from "components/ui/Loader";
 import Shell from "components/Shell";
 import RouteFilters from "components/RouteFilters";
-import FilteredRoutes from "components/FilteredRoutes";
-import SSRSuspense from "containers/SSRSuspense";
-import ErrorBoundary from "containers/ErrorBoundary";
+import RouteList from "components/RouteList";
 
 export default function Feed({ auth }) {
   const profileResource = useMemo(
@@ -61,7 +62,7 @@ export default function Feed({ auth }) {
     if (!freshRef.current) {
       routesResource.refresh();
     }
-  }, []);
+  }, [routesResource]);
 
   return (
     <Shell>
@@ -72,7 +73,7 @@ export default function Feed({ auth }) {
         <RouteFilters filters={params} setFilters={setParams} />
         <ErrorBoundary>
           <SSRSuspense fallback={<Loader className="text-blue" />}>
-            <FilteredRoutes routesResource={routesResource} filters={params} />
+            <RouteList filters={params} />
           </SSRSuspense>
         </ErrorBoundary>
       </div>

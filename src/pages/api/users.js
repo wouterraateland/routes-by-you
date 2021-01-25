@@ -15,6 +15,8 @@ export default async (req, res) => {
   if (req.query.q) {
     const q = req.query.q;
     query.ilike("display_name", `%${q}%`);
+  } else {
+    query.neq("display_name", "");
   }
 
   query = query

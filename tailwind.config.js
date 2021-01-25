@@ -4,7 +4,18 @@ module.exports = {
   purge: {
     content: ["./**/*.jsx", "./**/*.js"],
     options: {
-      safelist: ["stroke-0", "stroke-1", "stroke-2", "stroke-3", "stroke-4"],
+      safelist: [
+        "stroke-0",
+        "stroke-1",
+        "stroke-2",
+        "stroke-3",
+        "stroke-4",
+        "bg-red-600",
+        "bg-green-600",
+        "bg-yellow-600",
+        "bg-blue-600",
+        "bg-purple-600",
+      ],
     },
   },
   darkMode: "class",

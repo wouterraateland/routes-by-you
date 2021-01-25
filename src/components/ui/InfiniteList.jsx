@@ -5,7 +5,7 @@ import Loader from "components/ui/Loader";
 function LoaderComponentImpl(props, ref) {
   return (
     <div ref={ref} {...props} className="mx-auto my-4">
-      <Loader />
+      <Loader className="text-blue-600" />
     </div>
   );
 }
