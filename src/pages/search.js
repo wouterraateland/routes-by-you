@@ -20,7 +20,7 @@ export default function Search() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(null);
 
-  const debouncedQuery = useDebounce(query);
+  const debouncedQuery = useDebounce(query, 200);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -2,6 +2,7 @@ import { pointsToFont, pointsToHsl } from "utils/grades";
 
 import Link from "next/link";
 import Avatar from "components/ui/Avatar";
+import Username from "components/Username";
 import RouteImage from "components/RouteImage";
 import RouteSummary from "components/RouteSummary";
 
@@ -27,7 +28,9 @@ export default function Route({ route }) {
           <div>
             <p className="font-bold">
               <Link href={`/user/${route.setter.id}`}>
-                <a className="hover:underline">{route.setter.display_name}</a>
+                <a className="hover:underline">
+                  <Username user={route.setter} />
+                </a>
               </Link>
             </p>
             {route.location ? (

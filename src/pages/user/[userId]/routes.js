@@ -5,6 +5,7 @@ import Link from "next/link";
 import Repeat from "components/icons/Repeat";
 import Flash from "components/icons/Flash";
 import Avatar from "components/ui/Avatar";
+import Username from "components/Username";
 import Shell from "components/Shell";
 import RouteList from "components/RouteList";
 
@@ -21,7 +22,9 @@ export default function UserRoutes({ user }) {
             src={user.avatar}
             alt={user.display_name}
           />
-          <h1 className="text-xl font-bold">{user.display_name}</h1>
+          <h1 className="text-xl font-bold">
+            <Username user={user} />
+          </h1>
         </div>
         <div className="flex items-center">
           <Link href={`/user/${user.id}/routes`}>

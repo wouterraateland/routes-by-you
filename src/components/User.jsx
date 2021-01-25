@@ -2,6 +2,7 @@ import Link from "next/link";
 import Flash from "components/icons/Flash";
 import Repeat from "components/icons/Repeat";
 import Avatar from "components/ui/Avatar";
+import Username from "components/Username";
 
 export default function User({ user }) {
   return (
@@ -13,7 +14,9 @@ export default function User({ user }) {
           alt={user.display_name}
         />
         <span className="block">
-          <span className="font-bold">{user.display_name}</span>
+          <span className="font-bold">
+            <Username user={user} />
+          </span>
           <span className="flex items-center space-x-2 text-xs text-gray-600">
             <span className="flex items-center space-x-1">
               <Flash className="h-3" />

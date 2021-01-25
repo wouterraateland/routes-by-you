@@ -10,6 +10,7 @@ import Link from "next/link";
 import Cross from "components/icons/Cross";
 import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
+import Username from "components/Username";
 import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 import RouteSummary from "components/RouteSummary";
@@ -56,7 +57,7 @@ export default function ViewRoute({ auth, route }) {
                 <p className="font-bold">
                   <Link href={`/user/${route.setter.id}`}>
                     <a className="hover:underline">
-                      {route.setter.display_name}
+                      <Username user={route.setter} />
                     </a>
                   </Link>
                 </p>

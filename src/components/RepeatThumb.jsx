@@ -3,6 +3,7 @@ import { pointsToFont, pointsToHsl } from "utils/grades";
 
 import Link from "next/link";
 import Avatar from "components/ui/Avatar";
+import Username from "components/Username";
 
 export default function RepeatThumb({ repeat }) {
   return (
@@ -26,7 +27,9 @@ export default function RepeatThumb({ repeat }) {
           <p className="leading-4">
             <strong className="inline-block">
               <Link href={`/user/${repeat.user.id}`}>
-                <a className="hover:underline">{repeat.user.display_name}</a>
+                <a className="hover:underline">
+                  <Username user={repeat.user} />
+                </a>
               </Link>
             </strong>{" "}
             <span className="inline-block text-gray-400 text-xs uppercase">
