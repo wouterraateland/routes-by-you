@@ -170,8 +170,8 @@ export async function getServerSideProps({ params }) {
         setter: setter_id (*),
         repeats (*),
         location: location_id (*),
-        location_string,
-        comments: route_comments (*)
+        comments: route_comments (*),
+        reports: route_reports (*)
       `
     )
     .eq("id", routeId)

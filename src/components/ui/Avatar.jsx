@@ -12,7 +12,7 @@ export default function Avatar({ src, alt, className }) {
       {src ? (
         <Image src={src} alt={alt} layout="fill" className="object-cover" />
       ) : (
-        <span className="flex w-full h-full items-center justify-center">
+        <span className="flex w-full h-full items-center justify-center font-bold bg-gray-700 text-white">
           {placeholder}
         </span>
       )}

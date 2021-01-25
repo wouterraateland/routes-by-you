@@ -10,7 +10,8 @@ export default async (req, res) => {
       setter: setter_id (*),
       repeats (*),
       location: location_id (*),
-      comments: route_comments (*)
+      comments: route_comments (*),
+      reports: route_reports (*)
     `
   );
 

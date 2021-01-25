@@ -1,25 +1,18 @@
-import cx from "classnames";
-import { formatDistanceToNow } from "date-fns";
 import Router from "next/router";
 import { api } from "utils/api";
 import { supabase } from "utils/supabase";
 import { pointsToFont, pointsToHsl } from "utils/grades";
-import { copyTextToClipboard } from "utils/strings";
 
 import { useEffect, useState } from "react";
 
 import Head from "next/head";
 import Link from "next/link";
-import Camera from "components/icons/Camera";
-import Check from "components/icons/Check";
 import Cross from "components/icons/Cross";
-import Repeat from "components/icons/Repeat";
-import Share from "components/icons/Share";
 import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import RouteImage from "components/RouteImage";
-import StarRating from "components/StarRating";
 import RepeatThumb from "components/RepeatThumb";
+import RouteSummary from "components/RouteSummary";
 
 export default function ViewRoute({ auth, route }) {
   const [shared, setShared] = useState(false);
@@ -30,19 +23,10 @@ export default function ViewRoute({ auth, route }) {
     }
   }, [shared]);
 
-  const repeated = route.repeats.some(
-    (repeat) => repeat.user_id === auth?.user?.id
-  );
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
   const avgGrade =
     repeatsWithGrade.reduce((acc, repeat) => acc + repeat.grade, route.grade) /
     (repeatsWithGrade.length + 1);
-  const repeatsWithRating = route.repeats.filter((repeat) => repeat.rating);
-  const avgRating = repeatsWithRating.length
-    ? repeatsWithRating.reduce((acc, repeat) => acc + repeat.rating, 0) /
-      repeatsWithRating.length
-    : null;
-  const repeatsWithVideo = route.repeats.filter((repeat) => repeat.video);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,17 +43,15 @@ export default function ViewRoute({ auth, route }) {
               >
                 <Cross className="h-4" direction="left" />
               </Button>
-              {route.setter.avatar && (
-                <Link href={`/user/${route.setter.id}`}>
-                  <a>
-                    <Avatar
-                      className="w-10 h-10"
-                      src={route.setter.avatar}
-                      alt={route.setter.display_name}
-                    />
-                  </a>
-                </Link>
-              )}
+              <Link href={`/user/${route.setter.id}`}>
+                <a>
+                  <Avatar
+                    className="w-10 h-10"
+                    src={route.setter.avatar}
+                    alt={route.setter.display_name}
+                  />
+                </a>
+              </Link>
               <div>
                 <p className="font-bold">
                   <Link href={`/user/${route.setter.id}`}>
@@ -101,69 +83,7 @@ export default function ViewRoute({ auth, route }) {
             </p>
           </div>
           <RouteImage route={route} />
-          <div className="p-2 sm:px-4">
-            <div className="flex items-start justify-between space-x-2">
-              <div>
-                <h2 className="text-2xl font-black">{route.name}</h2>
-                {route.repeats.length > 0 ? (
-                  <div className="flex space-x-2 items-center text-gray-500 text-sm">
-                    <span>
-                      {route.repeats.length} repeat
-                      {route.repeats.length === 1 ? "" : "s"}
-                    </span>
-                    {repeatsWithRating.length > 0 && (
-                      <StarRating value={avgRating} className="h-4" />
-                    )}
-                    {repeatsWithVideo.length > 0 && (
-                      <span className="flex items-center space-x-1">
-                        <Camera filled className="h-3" />
-                        <span>
-                          {repeatsWithVideo.length} video
-                          {repeatsWithVideo.length === 1 ? "" : "s"}
-                        </span>
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-sm">Not repeated yet</p>
-                )}
-              </div>
-              <div className="my-1 flex items-center space-x-2">
-                <Link href={`/route/${route.id}/repeat`}>
-                  <a
-                    className={cx(
-                      "p-2",
-                      repeated
-                        ? "rounded-full bg-green-600 hover:bg-green-700 text-white font-bold"
-                        : "rounded-md hover:bg-gray-100 text-gray-500"
-                    )}
-                  >
-                    {repeated ? (
-                      <Check className="h-6" />
-                    ) : (
-                      <Repeat className="h-6" />
-                    )}
-                  </a>
-                </Link>
-                <Button
-                  className="p-2 rounded-md hover:bg-gray-100 text-gray-500"
-                  onClick={async () => {
-                    await copyTextToClipboard(
-                      `${process.env.NEXT_PUBLIC_PUBLIC_URL}/route/${route.id}`
-                    );
-                    setShared(true);
-                  }}
-                  hint={shared ? "Link copied!" : "Share route"}
-                >
-                  <Share className="h-6" />
-                </Button>
-              </div>
-            </div>
-            {route.description && <p className="py-2">{route.description}</p>}
-            <p className="text-xs text-gray-400 uppercase">
-              {formatDistanceToNow(new Date(route.created_at))} ago
-            </p>
-          </div>
+          <RouteSummary route={route} />
           <div>
             {route.repeats.length > 0 && (
               <div className="pt-2 px-2 sm:px-4">
@@ -217,8 +137,8 @@ export async function getServerSideProps({ params }) {
           user:user_id (*)
         ),
         location: location_id (*),
-        location_string,
-        comments: route_comments (*)
+        comments: route_comments (*),
+        reports: route_reports (*)
       `
     )
     .eq("id", routeId)

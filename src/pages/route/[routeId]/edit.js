@@ -1,6 +1,7 @@
 import Router from "next/router";
 import { api } from "utils/api";
 import { fontByPoints } from "utils/grades";
+import { notify } from "utils/notifications";
 import { supabase } from "utils/supabase";
 import { pointsToFont } from "utils/grades";
 import { getUser } from "utils/authServer";
@@ -76,6 +77,7 @@ export default function EditRoute({ route }) {
                   },
                 });
                 Router.replace(`/route/${route.id}`);
+                notify("Route updated!");
               }}
               disabled={
                 !formState.values.name ||
@@ -190,14 +192,7 @@ export async function getServerSideProps({ req, params }) {
     .select(
       `
         *,
-        setter: setter_id (*),
-        repeats (
-          *,
-          user:user_id (*)
-        ),
-        location: location_id (*),
-        location_string,
-        comments: route_comments (*)
+        location: location_id (*)
       `
     )
     .eq("id", routeId)

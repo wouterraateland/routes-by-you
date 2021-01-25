@@ -13,6 +13,10 @@ export default function Modal({ children, isOpen, onClose }) {
   }, [container]);
 
   useEffect(() => {
+    const prevent = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
     if (container && typeof onClose === "function") {
       const tryClose = (event) => {
         if (event.target === event.currentTarget) {
@@ -20,8 +24,10 @@ export default function Modal({ children, isOpen, onClose }) {
         }
       };
       container.addEventListener("click", tryClose);
+      container.addEventListener("wheel", prevent);
       return () => {
         container.removeEventListener("click", tryClose);
+        container.removeEventListener("wheel", prevent);
       };
     }
   }, [container, onClose]);

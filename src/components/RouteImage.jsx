@@ -21,7 +21,7 @@ export default function RouteImage({ route }) {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden">
       <img ref={imageRef} className="w-full" src={route.image} />
       {scale &&
         route.holds?.map((hold) => (
