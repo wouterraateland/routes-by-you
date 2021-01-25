@@ -20,7 +20,7 @@ import Button from "components/ui/Button";
 import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 
-export default function RepeatRoute({ auth, route }) {
+export default function ViewRoute({ auth, route }) {
   const [shared, setShared] = useState(false);
   useEffect(() => {
     if (shared) {
@@ -174,10 +174,9 @@ export default function RepeatRoute({ auth, route }) {
           </div>
         </div>
         {route.setter_id === auth?.user?.id && (
-          <div className="p-4 sm:p-0">
+          <div className="flex items-center space-x-4 p-4 sm:p-0">
             <Button
-              bgColor="red"
-              className="w-full px-4 py-2 rounded-md text-white font-bold"
+              className="w-full px-4 py-2 rounded-md text-red-600 font-bold border bg-white hover:bg-gray-100"
               onClick={async () => {
                 await api.delete("route", { body: { id: route.id } });
                 Router.back();
@@ -185,13 +184,19 @@ export default function RepeatRoute({ auth, route }) {
             >
               Delete route
             </Button>
+            <Button
+              className="w-full px-4 py-2 rounded-md font-bold border bg-white hover:bg-gray-100"
+              onClick={() => Router.push(`/route/${route.id}/edit`)}
+            >
+              Edit route
+            </Button>
           </div>
         )}
       </div>
     </div>
   );
 }
-RepeatRoute.authPolicy = {
+ViewRoute.authPolicy = {
   isAuthorized: (auth) => auth.user,
   redirect: "/auth/login",
 };

@@ -21,12 +21,12 @@ export default function FlyOut({
   if ((typeof isOpen === "undefined") !== (typeof onClose === "undefined")) {
     throw Error("Controlled component should specify onClose");
   }
-  const origin = originRef?.current || originNode;
 
   const [visible, setVisibility] = useState(defaultOpen);
   const flyOutRef = useRef(null);
 
   const render = useCallback(() => {
+    const origin = originRef?.current || originNode;
     const flyOut = flyOutRef.current;
 
     if (origin && flyOut && typeof window !== "undefined") {
@@ -34,13 +34,16 @@ export default function FlyOut({
       const wWidth = window.innerWidth;
       const wHeight = window.innerHeight;
 
+      const isTop = rect.top + rect.height / 2 < wHeight / 2;
+      const isLeft = rect.left + rect.width / 2 < wWidth / 2;
+
       const _direction =
         direction === "vertical"
-          ? rect.top + rect.height / 2 < wHeight / 2
+          ? isTop
             ? "bottom"
             : "top"
           : direction === "horizontal"
-          ? rect.left + rect.width / 2 < wWidth / 2
+          ? isLeft
             ? "right"
             : "left"
           : direction;
@@ -49,21 +52,19 @@ export default function FlyOut({
         case "top":
           setStyle(flyOut, {
             top: undefined,
-            left: rect.x + rect.width / 2,
+            left: isLeft ? rect.x : undefined,
             bottom: wHeight - rect.y,
-            right: undefined,
-            transform: `translate(-50%, 0)`,
+            right: isLeft ? undefined : wWidth - rect.right,
             maxWidth: wWidth,
             maxHeight: rect.top,
           });
           break;
         case "left":
           setStyle(flyOut, {
-            top: rect.y + rect.height / 2,
+            top: rect.y,
             left: undefined,
             bottom: undefined,
             right: rect.x,
-            transform: `translate(0, -50%)`,
             maxWidth: rect.x,
             maxHeight: wHeight,
           });
@@ -71,21 +72,19 @@ export default function FlyOut({
         case "bottom":
           setStyle(flyOut, {
             top: rect.y + rect.height,
-            left: rect.x + rect.width / 2,
+            left: isLeft ? rect.x : undefined,
             bottom: undefined,
-            right: undefined,
-            transform: `translate(-50%, 0)`,
+            right: isLeft ? undefined : wWidth - rect.right,
             maxWidth: wWidth,
             maxHeight: wHeight - rect.bottom,
           });
           break;
         case "right":
           setStyle(flyOut, {
-            top: rect.y + rect.height / 2,
+            top: rect.y,
             left: rect.x + rect.width,
             bottom: undefined,
             right: undefined,
-            transform: `translate(0, -50%)`,
             maxWidth: wWidth - (rect.x + rect.width),
             maxHeight: wHeight,
           });
@@ -94,9 +93,10 @@ export default function FlyOut({
           break;
       }
     }
-  }, [origin, direction]);
+  }, [originRef, originNode, direction]);
 
   useEffect(() => {
+    const origin = originRef?.current || originNode;
     if (origin && !controlled) {
       const show = () => {
         render();
@@ -108,7 +108,7 @@ export default function FlyOut({
         origin.removeEventListener("click", show);
       };
     }
-  }, [controlled, origin]);
+  }, [controlled, originRef, originNode]);
 
   useEffect(() => {
     render();
@@ -126,17 +126,17 @@ export default function FlyOut({
 
   return (
     <Modal isOpen={isOpen || visible} onClose={close}>
-      <div ref={flyOutRef} className="fixed">
-        <div
-          className={cx(
-            "m-2 rounded-md shadow-md bg-white overflow-y-auto",
-            { "opacity-0": !visible },
-            className
-          )}
-          onClick={persistOnClick ? undefined : close}
-        >
-          {children}
-        </div>
+      <div
+        ref={flyOutRef}
+        className={cx(
+          "fixed rounded-md shadow-md bg-white overflow-y-auto",
+          { "opacity-0": !visible },
+          ["vertical", "top", "bottom"].includes(direction) ? "my-2" : "mx-2",
+          className
+        )}
+        onClick={persistOnClick ? undefined : close}
+      >
+        {children}
       </div>
     </Modal>
   );

@@ -5,10 +5,13 @@ import { useMemo } from "react";
 import useResource from "hooks/useResource";
 
 import Head from "next/head";
+import Loader from "components/ui/Loader";
 import Shell from "components/Shell";
-import Route from "components/Route";
+import FilteredRoutes from "components/FilteredRoutes";
+import SSRSuspense from "containers/SSRSuspense";
+import ErrorBoundary from "containers/ErrorBoundary";
 
-export default function Feed({ auth, routes, error }) {
+export default function Feed({ auth }) {
   const profileResource = useMemo(
     () =>
       getSupabaseResource(
@@ -30,13 +33,11 @@ export default function Feed({ auth, routes, error }) {
         <title>My feed | Routes by You</title>
       </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
-        {error ? (
-          <p className="px-4 py-2 rounded-md bg-red-100 text-red-600">
-            {error.message}
-          </p>
-        ) : (
-          routes.map((route) => <Route key={route.id} route={route} />)
-        )}
+        <ErrorBoundary>
+          <SSRSuspense fallback={<Loader className="text-blue" />}>
+            <FilteredRoutes />
+          </SSRSuspense>
+        </ErrorBoundary>
       </div>
     </Shell>
   );
@@ -45,20 +46,3 @@ Feed.authPolicy = {
   isAuthorized: (auth) => auth.user,
   redirect: "/auth/login",
 };
-
-export async function getServerSideProps() {
-  const { data, error } = await supabase
-    .from("routes")
-    .select(
-      `
-      *,
-      setter: setter_id (*),
-      repeats (*),
-      location: location_id (*),
-      comments: route_comments (*)
-    `
-    )
-    .order("created_at", { ascending: false });
-
-  return { props: { error, routes: data } };
-}

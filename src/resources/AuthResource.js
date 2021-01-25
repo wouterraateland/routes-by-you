@@ -2,6 +2,8 @@ import { setCookie } from "utils/cookies";
 import { supabase } from "utils/supabase";
 import ObservableResource from "./ObservableResource";
 
+import Router from "next/router";
+
 export default class AuthResource extends ObservableResource {
   constructor() {
     super(
@@ -16,6 +18,9 @@ export default class AuthResource extends ObservableResource {
     supabase.auth.onAuthStateChange(async (event, session) => {
       this.persistSession(session);
       this.onNext({ session, user: session?.user ?? null });
+      if (event === "PASSWORD_RECOVERY") {
+        Router.push("/auth/reset-password");
+      }
     });
   }
 

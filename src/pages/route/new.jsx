@@ -61,11 +61,6 @@ export default function NewRoute({ auth }) {
       holds: route.holds.filter((hold) => hold.id !== holdId),
     }));
 
-  const [suggestedLocations, setSuggestedLocations] = useState([]);
-  const location = suggestedLocations.find(
-    (location) => location.id === route.location_id
-  );
-
   useEffect(() => {
     const pinchZoom = pinchZoomRef.current;
     const img = imgRef.current;
@@ -106,6 +101,10 @@ export default function NewRoute({ auth }) {
     }
   }, [route.image, step]);
 
+  const [suggestedLocations, setSuggestedLocations] = useState([]);
+  const location = suggestedLocations.find(
+    (location) => location.id === route.location_id
+  );
   const suggestionsOriginRef = useRef();
   const [focus, setFocus] = useState(false);
   useEffect(() => {
@@ -225,7 +224,7 @@ export default function NewRoute({ auth }) {
                     onClick={async () => {
                       const { url } = await api.post("upload", {
                         body: {
-                          key: `${auth.user.id}/avatar-${Date.now()}.jpg`,
+                          key: `${auth.user.id}/route-${Date.now()}.jpg`,
                           data: route.image,
                         },
                       });

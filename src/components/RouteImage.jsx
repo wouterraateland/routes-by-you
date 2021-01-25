@@ -8,9 +8,10 @@ export default function RouteImage({ route }) {
     const image = imageRef.current;
     if (image) {
       const resize = () => {
-        setScale(image.width / image.naturalWidth);
+        const scale = image.width / image.naturalWidth;
+        setScale(scale === Infinity ? null : scale);
       };
-      resize();
+      setTimeout(resize);
 
       window.addEventListener("resize", resize);
       return () => {
