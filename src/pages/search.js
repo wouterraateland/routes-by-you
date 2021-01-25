@@ -34,7 +34,7 @@ export default function Search() {
               className="p-4 sm:p-2 sm:rounded-md hover:bg-gray-100"
               onClick={() => Router.back()}
             >
-              <Cross className="h-4 sm:h-6" />
+              <Cross className="h-4" />
             </Button>
             <input
               className="p-2 sm:p-0 flex-grow focus:outline-none sm:text-xl"
