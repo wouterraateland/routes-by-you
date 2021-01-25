@@ -1,14 +1,14 @@
 import { supabase } from "utils/supabase";
 
 import Head from "next/head";
+import Link from "next/link";
 import Repeat from "components/icons/Repeat";
 import Flash from "components/icons/Flash";
 import Avatar from "components/ui/Avatar";
-import Card from "components/ui/Card";
 import Shell from "components/Shell";
 import Route from "components/Route";
 
-export default function UserPage({ user }) {
+export default function UserRepeats({ user }) {
   return (
     <Shell>
       <Head>
@@ -22,26 +22,32 @@ export default function UserPage({ user }) {
             alt={user.display_name}
           />
           <h1 className="text-xl font-bold">{user.display_name}</h1>
-          <div className="flex items-center justify-center space-x-4">
-            <Card className="flex items-center p-2 space-x-2 sm:p-4">
+        </div>
+        <div className="flex items-center">
+          <Link href={`/user/${user.id}/routes`}>
+            <a className="flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 border-transparent hover:bg-gray-100">
               <Flash className="h-4" />
               <p>
                 Set {user.routes.length} route
                 {user.routes.length === 1 ? "" : "s"}
               </p>
-            </Card>
-            <Card className="flex items-center p-2 space-x-2 sm:p-4">
+            </a>
+          </Link>
+          <Link href={`/user/${user.id}/repeats`}>
+            <a className="flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 border-current text-blue-600 hover:bg-gray-100">
               <Repeat className="h-4" />
               <p>
                 Climbed {user.repeats.length} route
                 {user.repeats.length === 1 ? "" : "s"}
               </p>
-            </Card>
-          </div>
+            </a>
+          </Link>
         </div>
-        {user.routes.map((route) => (
-          <Route key={route.id} route={route} />
-        ))}
+        <div className="sm:space-y-4">
+          {user.repeats.map((repeat) => (
+            <Route key={repeat.id} route={repeat.route} />
+          ))}
+        </div>
       </div>
     </Shell>
   );
@@ -55,15 +61,19 @@ export async function getServerSideProps({ params }) {
     .select(
       `
         *,
-        routes: routes!setter_id (
+        routes: routes!setter_id (id),
+        repeats (
           *,
-          setter: setter_id (*),
-          repeats (*),
-          location: location_id (*),
-          location_string,
-          comments: route_comments (*)
-        ),
-        repeats (id)
+          route: route_id (
+            *,
+            setter: setter_id (*),
+            repeats (*),
+            location: location_id (*),
+            location_string,
+            comments: route_comments (*),
+            reports: route_reports (*)
+          )
+        )
       `
     )
     .eq("id", userId)

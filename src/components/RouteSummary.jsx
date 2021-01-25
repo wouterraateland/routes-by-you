@@ -111,7 +111,7 @@ export default function RouteSummary({ route }) {
             <Share className="h-4" />
             <span>Copy link</span>
           </Button>
-          {reportedBy.includes(user.id) ? (
+          {reportedBy.includes(user?.id) ? (
             <Button
               className="flex items-center space-x-4 w-full p-4 hover:bg-gray-100"
               onClick={async () => {

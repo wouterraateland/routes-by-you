@@ -22,5 +22,14 @@ module.exports = {
   images: {
     domains: ["routes-by-you.s3.eu-central-1.amazonaws.com"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/user/:userId",
+        destination: "/user/:userId/routes",
+        permanent: true,
+      },
+    ];
+  },
   basePath,
 };

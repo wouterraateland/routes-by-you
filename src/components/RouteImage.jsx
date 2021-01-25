@@ -11,7 +11,11 @@ export default function RouteImage({ route }) {
         const scale = image.width / image.naturalWidth;
         setScale(scale === Infinity ? null : scale);
       };
-      setTimeout(resize);
+      if (image.complete) {
+        resize();
+      } else {
+        image.onload = resize;
+      }
 
       window.addEventListener("resize", resize);
       return () => {
