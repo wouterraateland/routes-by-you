@@ -23,6 +23,10 @@ export default async (req, res) => {
     query = query.eq("setter_id", req.query.setter_id);
   }
 
+  if (req.query.climber_id) {
+    query = query.eq("repeats.user_id", req.query.climber_id);
+  }
+
   if (req.query.location_id) {
     query = query.eq("location_id", req.query.location_id);
   }
@@ -37,7 +41,11 @@ export default async (req, res) => {
 
   if (req.query.q) {
     const q = req.query.q;
-    query.ilike("name", `%${q}%`);
+    query = query.ilike("name", `%${q}%`);
+  }
+
+  if (req.query.active) {
+    query = query.is("active", req.query.active === "true");
   }
 
   query = query

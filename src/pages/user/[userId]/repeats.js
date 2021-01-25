@@ -43,7 +43,7 @@ export default function UserRepeats({ user }) {
             </a>
           </Link>
         </div>
-        <div className="sm:space-y-4">
+        <div className="divide-y sm:space-y-2 sm:divide-y-0 border-t border-b sm:border-0">
           {user.repeats.map((repeat) => (
             <Route key={repeat.id} route={repeat.route} />
           ))}
@@ -77,7 +77,6 @@ export async function getServerSideProps({ params }) {
       `
     )
     .eq("id", userId)
-    .order("created_at", { ascending: false, foreignTable: "routes" })
     .order("created_at", { ascending: false, foreignTable: "repeats" })
     .single();
   if (error) {

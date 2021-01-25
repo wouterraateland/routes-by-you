@@ -7,7 +7,7 @@ export default async (req, res) => {
   let query = supabase.from("locations").select(
     `
       *,
-      routes: routes!location_id (id)
+      routes: routes!location_id (id, active)
     `
   );
 

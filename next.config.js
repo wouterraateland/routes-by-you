@@ -29,6 +29,11 @@ module.exports = {
         destination: "/user/:userId/routes",
         permanent: true,
       },
+      {
+        source: "/location/:locationId",
+        destination: "/location/:locationId/active",
+        permanent: true,
+      },
     ];
   },
   basePath,

@@ -6,7 +6,7 @@ import Repeat from "components/icons/Repeat";
 import Flash from "components/icons/Flash";
 import Avatar from "components/ui/Avatar";
 import Shell from "components/Shell";
-import Route from "components/Route";
+import RouteList from "components/RouteList";
 
 export default function UserRoutes({ user }) {
   return (
@@ -43,11 +43,7 @@ export default function UserRoutes({ user }) {
             </a>
           </Link>
         </div>
-        <div className="sm:space-y-4">
-          {user.routes.map((route) => (
-            <Route key={route.id} route={route} />
-          ))}
-        </div>
+        <RouteList filters={{ setter_id: user.id }} />
       </div>
     </Shell>
   );
@@ -61,21 +57,11 @@ export async function getServerSideProps({ params }) {
     .select(
       `
         *,
-        routes: routes!setter_id (
-          *,
-          setter: setter_id (*),
-          repeats (*),
-          location: location_id (*),
-          location_string,
-          comments: route_comments (*),
-          reports: route_reports (*)
-        ),
+        routes: routes!setter_id (id),
         repeats (id)
       `
     )
     .eq("id", userId)
-    .order("created_at", { ascending: false, foreignTable: "routes" })
-    .order("created_at", { ascending: false, foreignTable: "repeats" })
     .single();
   if (error) {
     console.error(error);

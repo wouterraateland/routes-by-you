@@ -39,6 +39,11 @@ export default function RouteSummary({ route }) {
 
   return (
     <div className="p-2">
+      {!route.active && (
+        <p className="px-2 mb-2 rounded-md bg-yellow-500 font-bold">
+          Route cannot be climbed anymore
+        </p>
+      )}
       <div className="flex items-start justify-between space-x-2">
         <div>
           <div className="flex items-center space-x-2">
