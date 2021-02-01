@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useMemo, useRef } from "react";
 
 import Loader from "components/ui/Loader";
 
@@ -28,10 +28,6 @@ export default function InfiniteList({
     ...components,
   };
 
-  const [{ start, end }, setState] = useState({
-    start: 0,
-    end: Math.min(pageSize, items.length),
-  });
   const loaderRef = useRef(null);
 
   const loaderIO = useMemo(
@@ -39,15 +35,13 @@ export default function InfiniteList({
       new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (end < items.length) {
-              setState(({ start, end }) => ({ start, end: end + pageSize }));
-            } else if (loadPage) {
+            if (loadPage) {
               loadPage();
             }
           }
         });
       }),
-    [end, items.length, pageSize, loadPage]
+    [items.length, pageSize, loadPage]
   );
 
   useEffect(() => {
@@ -60,10 +54,8 @@ export default function InfiniteList({
 
   return (
     <Components.Container>
-      {items.slice(start, end).map(renderItem)}
-      {(end < items.length || loadPage) && (
-        <Components.Loader ref={loaderRef} />
-      )}
+      {items.map(renderItem)}
+      {loadPage && <Components.Loader ref={loaderRef} />}
     </Components.Container>
   );
 }

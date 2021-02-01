@@ -6,7 +6,8 @@ import RouteImage from "components/RouteImage";
 import RouteSummary from "components/RouteSummary";
 
 export default function Route({ route }) {
-  const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
+  const repeatsWithGrade =
+    route.repeats?.filter((repeat) => repeat.grade) ?? [];
   const avgGrade =
     repeatsWithGrade.reduce((acc, repeat) => acc + repeat.grade, route.grade) /
     (repeatsWithGrade.length + 1);

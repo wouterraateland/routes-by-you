@@ -30,13 +30,15 @@ export default function RouteSummary({ route }) {
     route.reports.map((report) => report.user_id)
   );
 
-  const repeated = route.repeats.some((repeat) => repeat.user_id === user?.id);
-  const repeatsWithRating = route.repeats.filter((repeat) => repeat.rating);
+  const repeats = route.repeats ?? [];
+  const repeatCount = repeats.length;
+  const repeated = repeats.some((repeat) => repeat.user_id === user?.id);
+  const repeatsWithRating = repeats.filter((repeat) => repeat.rating);
   const avgRating = repeatsWithRating.length
     ? repeatsWithRating.reduce((acc, repeat) => acc + repeat.rating, 0) /
       repeatsWithRating.length
     : null;
-  const repeatsWithVideo = route.repeats.filter((repeat) => repeat.video);
+  const repeatsWithVideo = repeats.filter((repeat) => repeat.video);
 
   return (
     <div className="p-2">
@@ -65,11 +67,11 @@ export default function RouteSummary({ route }) {
               </Button>
             )}
           </div>
-          {route.repeats.length > 0 ? (
+          {repeatCount > 0 ? (
             <div className="flex flex-wrap -mx-1 items-center text-gray-500 text-sm">
               <span className="mx-1">
-                {route.repeats.length} repeat
-                {route.repeats.length === 1 ? "" : "s"}
+                {repeatCount} repeat
+                {repeatCount === 1 ? "" : "s"}
               </span>
               {repeatsWithRating.length > 0 && (
                 <div className="mx-1">

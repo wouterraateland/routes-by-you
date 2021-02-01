@@ -1,35 +1,33 @@
 import ObservableResource from "./ObservableResource";
 
 export default class PagedResource extends ObservableResource {
-  page = 0;
   hasNext = true;
 
-  constructor(createPromise) {
+  constructor(limit, createPromise) {
     super(
-      createPromise(0).then(({ data, hasNext }) => {
+      createPromise(0, limit).then(({ data, hasNext }) => {
         this.hasNext = hasNext;
         return data;
       })
     );
 
+    this.limit = limit;
     this.createPromise = createPromise;
   }
 
   async fetchNextPage() {
-    this.page++;
-    const { data, hasNext } = await this.createPromise(this.page);
+    const { data, hasNext } = await this.createPromise(
+      this.data.length,
+      this.limit
+    );
     this.hasNext = hasNext;
     this.onNext((this.data || []).concat(data));
   }
 
   async refresh() {
-    const responses = await Promise.all(
-      Array(this.page + 1)
-        .fill()
-        .map((_, page) => this.createPromise(page))
-    );
+    const { data, hasNext } = await this.createPromise(0, this.data.length);
 
-    this.hasNext = responses.every(({ hasNext }) => hasNext);
-    this.onNext(responses.flatMap(({ data }) => data));
+    this.hasNext = hasNext;
+    this.onNext(data);
   }
 }

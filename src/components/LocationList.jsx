@@ -24,9 +24,9 @@ export default function LocationList({
     .map((key) => `${key}=${filters[key]}`)
     .join("&");
   const locationsResource = locationsCache.read(filter, () => {
-    return new PagedResource((page) =>
+    return new PagedResource(limit, (offset, limit) =>
       api
-        .get(`locations?${filter}&page=${page}&limit=${limit}`)
+        .get(`locations?${filter}&offset=${offset}&limit=${limit}`)
         .then((data) => ({ data, hasNext: data.length > 0 }))
     );
   });

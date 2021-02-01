@@ -22,9 +22,9 @@ export default function RouteList({
     .map((key) => `${key}=${filters[key]}`)
     .join("&");
   const routesResource = routesCache.read(filter, () => {
-    return new PagedResource((page) =>
+    return new PagedResource(limit, (offset, limit) =>
       api
-        .get(`routes?${filter}&page=${page}&limit=${limit}`)
+        .get(`routes?${filter}&offset=${offset}&limit=${limit}`)
         .then((data) => ({ data, hasNext: data.length > 0 }))
     );
   });
@@ -32,7 +32,7 @@ export default function RouteList({
   const routes = useResource(routesResource);
   const visibleRoutes = routes
     .filter((route) =>
-      route.repeats.some((repeat) => repeat.user_id === user.id)
+      route.repeats?.some((repeat) => repeat.user_id === user.id)
         ? filters.show_repeated !== false
         : filters.show_not_repeated !== false
     )

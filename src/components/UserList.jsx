@@ -22,9 +22,9 @@ export default function UserList({
     .map((key) => `${key}=${filters[key]}`)
     .join("&");
   const usersResource = usersCache.read(filter, () => {
-    return new PagedResource((page) =>
+    return new PagedResource(limit, (offset, limit) =>
       api
-        .get(`users?${filter}&page=${page}&limit=${limit}`)
+        .get(`users?${filter}&offset=${offset}&limit=${limit}`)
         .then((data) => ({ data, hasNext: data.length > 0 }))
     );
   });

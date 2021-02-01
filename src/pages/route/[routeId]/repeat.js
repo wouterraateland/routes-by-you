@@ -1,9 +1,10 @@
+import Router from "next/router";
+
 import { api } from "utils/api";
 import { supabase } from "utils/supabase";
 import { fontByPoints, pointsToFont } from "utils/grades";
 
 import { useState } from "react";
-import { useRouter } from "next/router";
 
 import Head from "next/head";
 import Cross from "components/icons/Cross";
@@ -13,12 +14,10 @@ import Input from "components/ui/Input";
 import StarRating from "components/StarRating";
 
 export default function RepeatRoute({ auth, route }) {
-  const router = useRouter();
-
-  const { routeId } = router.query;
-  const upstreamRepeat = auth.user
-    ? route.repeats.find((repeat) => repeat.user_id === auth.user.id)
-    : null;
+  const { routeId } = Router.query;
+  const upstreamRepeat = route.repeats.find(
+    (repeat) => repeat.user_id === auth?.user?.id
+  );
   const [repeat, setRepeat] = useState(
     upstreamRepeat || {
       route_id: routeId,
@@ -40,7 +39,7 @@ export default function RepeatRoute({ auth, route }) {
           <div className="w-20">
             <Button
               className="p-2 rounded-md hover:bg-gray-100"
-              onClick={() => router.back()}
+              onClick={() => Router.back()}
             >
               <Cross className="h-4" />
             </Button>
@@ -55,7 +54,7 @@ export default function RepeatRoute({ auth, route }) {
                 await api.post("repeat", {
                   body: repeat,
                 });
-                router.back();
+                Router.back();
               }}
             >
               Save
@@ -142,7 +141,7 @@ export default function RepeatRoute({ auth, route }) {
                   await api.delete("repeat", {
                     body: { id: repeat.id },
                   });
-                  router.back();
+                  Router.back();
                 }}
               >
                 Delete repeat

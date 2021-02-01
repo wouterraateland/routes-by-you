@@ -7,4 +7,8 @@ export class Cache {
     }
     return this.data[key];
   }
+
+  clear() {
+    this.data = {};
+  }
 }

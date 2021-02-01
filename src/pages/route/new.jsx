@@ -6,6 +6,7 @@ import { fontByPoints, pointsToFont } from "utils/grades";
 import { supabase } from "utils/supabase";
 import { api } from "utils/api";
 import { between } from "utils/math";
+import { routesCache } from "utils/routes";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -236,6 +237,8 @@ export default function NewRoute({ auth }) {
                           image: url,
                         },
                       });
+                      routesCache.maxDate = new Date().toISOString();
+                      routesCache.clear();
                       Router.replace(`/route/${createdRoute.id}`);
                     }}
                     disabled={

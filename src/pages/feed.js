@@ -1,10 +1,9 @@
-import Router from "next/router";
-
 import { supabase, getSupabaseResource } from "utils/supabase";
 import { api } from "utils/api";
 import { routesCache } from "utils/routes";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/router";
 import useResource from "hooks/useResource";
 import PagedResource from "resources/PagedResource";
 
@@ -18,6 +17,7 @@ import RouteFilters from "components/RouteFilters";
 import RouteList from "components/RouteList";
 
 export default function Feed({ auth }) {
+  const router = useRouter();
   const profileResource = useMemo(
     () =>
       getSupabaseResource(
@@ -30,33 +30,39 @@ export default function Feed({ auth }) {
   );
   const profile = useResource(profileResource);
   if (!profile.display_name) {
-    Router.replace("/profile");
+    router.replace("/profile");
   }
 
   const freshRef = useRef(false);
-  const [params, setParams] = useState({
-    max_date: routesCache.maxDate,
-    min_grade: undefined,
-    max_grade: undefined,
-    setter_id: undefined,
-    location_id: undefined,
-    show_repeated: true,
-    show_not_repeated: true,
-    hide_active: false,
-    hide_archived: true,
-    hide_official: false,
-    hide_not_official: false,
-    q: "",
-  });
+  const params = useMemo(() => {
+    const status = (
+      router.query.status || "repeated,not_repeated,official,user_set,active"
+    ).split(",");
+
+    return {
+      max_date: routesCache.maxDate,
+      min_grade: router.query.min_grade,
+      max_grade: router.query.max_grade,
+      setter_id: router.query.setter_id,
+      location_id: router.query.location_id,
+      show_repeated: status.includes("repeated"),
+      show_not_repeated: status.includes("not_repeated"),
+      hide_active: !status.includes("active"),
+      hide_archived: !status.includes("archived"),
+      hide_official: !status.includes("official"),
+      hide_not_official: !status.includes("user_set"),
+      q: "",
+    };
+  }, [router.query, routesCache.maxDate]);
   const filter = Object.keys(params)
     .filter((key) => Boolean(params[key]))
     .map((key) => `${key}=${params[key]}`)
     .join("&");
   const routesResource = routesCache.read(filter, () => {
     freshRef.current = true;
-    return new PagedResource((page) =>
+    return new PagedResource(10, (offset, limit) =>
       api
-        .get(`routes?${filter}&page=${page}&limit=10`)
+        .get(`routes?${filter}&offset=${offset}&limit=${limit}`)
         .then((data) => ({ data, hasNext: data.length > 0 }))
     );
   });
@@ -73,7 +79,7 @@ export default function Feed({ auth }) {
         <title>My feed | Routes by You</title>
       </Head>
       <div className="max-w-xl mx-auto sm:py-4 sm:space-y-4">
-        <RouteFilters filters={params} setFilters={setParams} />
+        <RouteFilters />
         <ErrorBoundary>
           <SSRSuspense fallback={<Loader className="text-blue" />}>
             <RouteList filters={params} />

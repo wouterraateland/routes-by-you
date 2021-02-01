@@ -10,8 +10,27 @@ import Loop from "components/icons/Loop";
 import Button from "components/ui/Button";
 import SegmentedControl from "components/ui/SegmentedControl";
 
-export default function RouteFilters({ filters, setFilters }) {
+export default function RouteFilters() {
   const [expanded, setExpanded] = useState(false);
+  const status = (
+    Router.query.status || "repeated,not_repeated,official,user_set,active"
+  ).split(",");
+
+  const setParam = (name, value) => {
+    Router.replace({
+      pathname: Router.pathname,
+      query: { ...Router.query, [name]: value },
+    });
+  };
+
+  const toggleStatus = (s, value) => {
+    setParam(
+      "status",
+      (value ? status.concat(s) : status.filter((other) => other !== s)).join(
+        ","
+      )
+    );
+  };
 
   return (
     <div className="p-4 sm:p-0 space-y-2">
@@ -42,13 +61,8 @@ export default function RouteFilters({ filters, setFilters }) {
             <span className="text-gray-500">Grade</span>
             <select
               className="p-1 rounded-md border bg-gray-50 focus:outline-none focus:border-blue-600"
-              value={filters.min_grade}
-              onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  min_grade: event.target.value,
-                }))
-              }
+              value={Router.query.min_grade}
+              onChange={(event) => setParam("min_grade", event.target.value)}
             >
               <option value="">?</option>
               {Object.keys(fontByPoints)
@@ -57,7 +71,7 @@ export default function RouteFilters({ filters, setFilters }) {
                   <option
                     key={points}
                     value={points}
-                    disabled={points > filters.max_grade}
+                    disabled={points > Router.query.max_grade}
                   >
                     {pointsToFont(points)}
                   </option>
@@ -66,13 +80,8 @@ export default function RouteFilters({ filters, setFilters }) {
             <span>-</span>
             <select
               className="p-1 rounded-md border bg-gray-50 focus:outline-none focus:border-blue-600"
-              value={filters.max_grade}
-              onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  max_grade: event.target.value,
-                }))
-              }
+              value={Router.query.max_grade}
+              onChange={(event) => setParam("max_grade", event.target.value)}
             >
               <option value="">?</option>
               {Object.keys(fontByPoints)
@@ -81,7 +90,7 @@ export default function RouteFilters({ filters, setFilters }) {
                   <option
                     key={points}
                     value={points}
-                    disabled={points < filters.min_grade}
+                    disabled={points < Router.query.min_grade}
                   >
                     {pointsToFont(points)}
                   </option>
@@ -90,66 +99,46 @@ export default function RouteFilters({ filters, setFilters }) {
           </div>
           <SegmentedControl.Container>
             <SegmentedControl.Item
-              checked={!!filters.show_repeated}
+              checked={status.includes("repeated")}
               onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  show_repeated: event.target.checked,
-                }))
+                toggleStatus("repeated", event.target.checked)
               }
               label="Repeated"
             />
             <SegmentedControl.Item
-              checked={!!filters.show_not_repeated}
+              checked={status.includes("not_repeated")}
               onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  show_not_repeated: event.target.checked,
-                }))
+                toggleStatus("not_repeated", event.target.checked)
               }
               label="Not repeated"
             />
           </SegmentedControl.Container>
           <SegmentedControl.Container>
             <SegmentedControl.Item
-              checked={!filters.hide_official}
+              checked={status.includes("official")}
               onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  hide_official: !event.target.checked,
-                }))
+                toggleStatus("official", event.target.checked)
               }
               label="Official routes"
             />
             <SegmentedControl.Item
-              checked={!filters.hide_not_official}
+              checked={status.includes("user_set")}
               onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  hide_not_official: !event.target.checked,
-                }))
+                toggleStatus("user_set", event.target.checked)
               }
               label="Set by users"
             />
           </SegmentedControl.Container>
           <SegmentedControl.Container>
             <SegmentedControl.Item
-              checked={!filters.hide_active}
-              onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  hide_active: !event.target.checked,
-                }))
-              }
+              checked={status.includes("active")}
+              onChange={(event) => toggleStatus("active", event.target.checked)}
               label="Active"
             />
             <SegmentedControl.Item
-              checked={!filters.hide_archived}
+              checked={status.includes("archived")}
               onChange={(event) =>
-                setFilters((filters) => ({
-                  ...filters,
-                  hide_archived: !event.target.checked,
-                }))
+                toggleStatus("archived", event.target.checked)
               }
               label="Archived"
             />

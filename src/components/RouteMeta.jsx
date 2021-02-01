@@ -16,15 +16,17 @@ export default function RouteMeta({ route }) {
           </a>
         </Link>
       ) : (
-        <Link href={`/location/${route.location.id}`}>
-          <a>
-            <Avatar
-              className="w-10 h-10"
-              src={route.location.logo}
-              alt={route.location.name}
-            />
-          </a>
-        </Link>
+        route.location && (
+          <Link href={`/location/${route.location.id}`}>
+            <a>
+              <Avatar
+                className="w-10 h-10"
+                src={route.location.logo}
+                alt={route.location.name}
+              />
+            </a>
+          </Link>
+        )
       )}
       <div>
         {route.setter ? (
@@ -50,9 +52,13 @@ export default function RouteMeta({ route }) {
           </>
         ) : (
           <p className="font-bold">
-            <Link href={`/location/${route.location.id}`}>
-              <a>{route.location.name}</a>
-            </Link>
+            {route.location ? (
+              <Link href={`/location/${route.location.id}`}>
+                <a>{route.location.name}</a>
+              </Link>
+            ) : (
+              route.location_string
+            )}
           </p>
         )}
       </div>

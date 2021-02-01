@@ -42,7 +42,6 @@ export default function ViewRoute({ auth, route }) {
               >
                 <Cross className="h-4" direction="left" />
               </Button>
-
               <RouteMeta route={route} />
             </div>
             <p
