@@ -10,10 +10,11 @@ import useAuth from "hooks/useAuth";
 import Link from "next/link";
 import Camera from "components/icons/Camera";
 import Check from "components/icons/Check";
-import Repeat from "components/icons/Repeat";
 import Dots from "components/icons/Dots";
-import Warn from "components/icons/Warn";
+import Repeat from "components/icons/Repeat";
+import RoutesByYou from "components/icons/RoutesByYou";
 import Share from "components/icons/Share";
+import Warn from "components/icons/Warn";
 import Button from "components/ui/Button";
 import FlyOut from "components/ui/FlyOut";
 import StarRating from "components/StarRating";
@@ -58,6 +59,11 @@ export default function RouteSummary({ route }) {
               </Button>
             )}
             <h2 className="text-2xl font-black">{route.name}</h2>
+            {route.official && (
+              <Button className="text-blue-600" hint="Official route">
+                <RoutesByYou className="h-4" />
+              </Button>
+            )}
           </div>
           {route.repeats.length > 0 ? (
             <div className="flex flex-wrap -mx-1 items-center text-gray-500 text-sm">

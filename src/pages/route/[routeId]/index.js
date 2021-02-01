@@ -6,11 +6,9 @@ import { pointsToFont, pointsToHsl } from "utils/grades";
 import { useEffect, useState } from "react";
 
 import Head from "next/head";
-import Link from "next/link";
 import Cross from "components/icons/Cross";
-import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
-import Username from "components/Username";
+import RouteMeta from "components/RouteMeta";
 import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 import RouteSummary from "components/RouteSummary";
@@ -44,37 +42,8 @@ export default function ViewRoute({ auth, route }) {
               >
                 <Cross className="h-4" direction="left" />
               </Button>
-              <Link href={`/user/${route.setter.id}`}>
-                <a>
-                  <Avatar
-                    className="w-10 h-10"
-                    src={route.setter.avatar}
-                    alt={route.setter.display_name}
-                  />
-                </a>
-              </Link>
-              <div>
-                <p className="font-bold">
-                  <Link href={`/user/${route.setter.id}`}>
-                    <a className="hover:underline">
-                      <Username user={route.setter} />
-                    </a>
-                  </Link>
-                </p>
-                {route.location ? (
-                  <p className="text-sm text-blue-600 hover:underline">
-                    <Link href={`/location/${route.location.id}`}>
-                      <a>{route.location.name}</a>
-                    </Link>
-                  </p>
-                ) : (
-                  route.location_string && (
-                    <p className="text-sm text-gray-500">
-                      {route.location_string}
-                    </p>
-                  )
-                )}
-              </div>
+
+              <RouteMeta route={route} />
             </div>
             <p
               className="text-xl font-black text-white rounded-full px-2"
