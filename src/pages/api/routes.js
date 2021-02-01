@@ -44,8 +44,20 @@ export default async (req, res) => {
     query = query.ilike("name", `%${q}%`);
   }
 
-  if (req.query.active) {
-    query = query.is("active", req.query.active === "true");
+  if (req.query.hide_active) {
+    query = query.is("active", false);
+  }
+
+  if (req.query.hide_archived) {
+    query = query.is("active", true);
+  }
+
+  if (req.query.hide_official) {
+    query = query.is("official", false);
+  }
+
+  if (req.query.hide_not_official) {
+    query = query.is("official", true);
   }
 
   query = query

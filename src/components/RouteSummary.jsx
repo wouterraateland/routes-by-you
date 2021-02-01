@@ -61,7 +61,7 @@ export default function RouteSummary({ route }) {
             <h2 className="text-2xl font-black">{route.name}</h2>
             {route.official && (
               <Button className="text-blue-600" hint="Official route">
-                <RoutesByYou className="h-4" />
+                <RoutesByYou className="h-4" color="blue" />
               </Button>
             )}
           </div>

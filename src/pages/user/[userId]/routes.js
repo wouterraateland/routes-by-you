@@ -1,10 +1,10 @@
 import { supabase } from "utils/supabase";
 
 import Head from "next/head";
-import Link from "next/link";
 import Repeat from "components/icons/Repeat";
-import Flash from "components/icons/Flash";
+import RoutesByYou from "components/icons/RoutesByYou";
 import Avatar from "components/ui/Avatar";
+import Tabs from "components/ui/Tabs";
 import Username from "components/Username";
 import Shell from "components/Shell";
 import RouteList from "components/RouteList";
@@ -26,26 +26,22 @@ export default function UserRoutes({ user }) {
             <Username user={user} />
           </h1>
         </div>
-        <div className="flex items-center">
-          <Link href={`/user/${user.id}/routes`}>
-            <a className="flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 border-current text-blue-600 hover:bg-gray-100">
-              <Flash className="h-4" filled />
-              <p>
-                Set {user.routes.length} route
-                {user.routes.length === 1 ? "" : "s"}
-              </p>
-            </a>
-          </Link>
-          <Link href={`/user/${user.id}/repeats`}>
-            <a className="flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 border-transparent hover:bg-gray-100">
-              <Repeat className="h-4" />
-              <p>
-                Climbed {user.repeats.length} route
-                {user.repeats.length === 1 ? "" : "s"}
-              </p>
-            </a>
-          </Link>
-        </div>
+        <Tabs.Container>
+          <Tabs.Tab
+            href={`/user/${user.id}/routes`}
+            Icon={RoutesByYou}
+            label={`Set ${user.routes.length} route${
+              user.routes.length === 1 ? "" : "s"
+            }`}
+          />
+          <Tabs.Tab
+            href={`/user/${user.id}/repeats`}
+            Icon={Repeat}
+            label={`Climbed ${user.repeats.length} route${
+              user.repeats.length === 1 ? "" : "s"
+            }`}
+          />
+        </Tabs.Container>
         <RouteList filters={{ setter_id: user.id }} />
       </div>
     </Shell>

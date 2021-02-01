@@ -2,7 +2,6 @@ import Router from "next/router";
 
 import { supabase, getSupabaseResource } from "utils/supabase";
 import { api } from "utils/api";
-import { fontByPoints } from "utils/grades";
 import { routesCache } from "utils/routes";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -37,12 +36,16 @@ export default function Feed({ auth }) {
   const freshRef = useRef(false);
   const [params, setParams] = useState({
     max_date: routesCache.maxDate,
-    min_grade: Math.min(...Object.keys(fontByPoints)),
-    max_grade: Math.max(...Object.keys(fontByPoints)),
+    min_grade: undefined,
+    max_grade: undefined,
     setter_id: undefined,
     location_id: undefined,
     show_repeated: true,
     show_not_repeated: true,
+    hide_active: false,
+    hide_archived: true,
+    hide_official: false,
+    hide_not_official: false,
     q: "",
   });
   const filter = Object.keys(params)

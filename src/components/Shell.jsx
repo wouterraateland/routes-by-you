@@ -32,7 +32,11 @@ export default function Shell({ children }) {
                     { "text-blue-600": pathname === href }
                   )}
                 >
-                  <Icon className="h-6" filled={pathname === href} />
+                  <Icon
+                    className="h-6"
+                    filled={pathname === href}
+                    color={pathname === href ? "blue" : "black"}
+                  />
                   <span className="text-xs opacity-75">{label}</span>
                 </a>
               </Link>

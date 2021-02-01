@@ -2,8 +2,8 @@ import { supabase } from "utils/supabase";
 import { cleanUrl } from "utils/strings";
 
 import Head from "next/head";
-import Link from "next/link";
 import Avatar from "components/ui/Avatar";
+import Tabs from "components/ui/Tabs";
 import Shell from "components/Shell";
 import RouteList from "components/RouteList";
 
@@ -38,26 +38,20 @@ export default function LocationPage({ location }) {
             )}
           </div>
         </div>
-        <div className="flex items-center">
-          <Link href={`/location/${location.id}/active`}>
-            <a className="flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 border-current text-blue-600 hover:bg-gray-100">
-              {/* <Flash className="h-4" /> */}
-              <p>
-                {activeRoutes} active route
-                {activeRoutes === 1 ? "" : "s"}
-              </p>
-            </a>
-          </Link>
-          <Link href={`/location/${location.id}/archived`}>
-            <a className="flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 border-transparent hover:bg-gray-100">
-              {/* <Repeat className="h-4" /> */}
-              <p>
-                {archivedRoutes} archived route
-                {archivedRoutes === 1 ? "" : "s"}
-              </p>
-            </a>
-          </Link>
-        </div>
+        <Tabs.Container>
+          <Tabs.Tab
+            href={`/location/${location.id}/active`}
+            label={`${activeRoutes} active route${
+              activeRoutes === 1 ? "" : "s"
+            }`}
+          />
+          <Tabs.Tab
+            href={`/location/${location.id}/archived`}
+            label={`${archivedRoutes} archived route${
+              archivedRoutes === 1 ? "" : "s"
+            }`}
+          />
+        </Tabs.Container>
         <RouteList filters={{ location_id: location.id, active: true }} />
       </div>
     </Shell>

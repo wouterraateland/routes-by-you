@@ -8,6 +8,7 @@ import { useState } from "react";
 import Filter from "components/icons/Filter";
 import Loop from "components/icons/Loop";
 import Button from "components/ui/Button";
+import SegmentedControl from "components/ui/SegmentedControl";
 
 export default function RouteFilters({ filters, setFilters }) {
   const [expanded, setExpanded] = useState(false);
@@ -49,6 +50,7 @@ export default function RouteFilters({ filters, setFilters }) {
                 }))
               }
             >
+              <option value="">?</option>
               {Object.keys(fontByPoints)
                 .sort()
                 .map((points) => (
@@ -72,6 +74,7 @@ export default function RouteFilters({ filters, setFilters }) {
                 }))
               }
             >
+              <option value="">?</option>
               {Object.keys(fontByPoints)
                 .sort()
                 .map((points) => (
@@ -85,34 +88,72 @@ export default function RouteFilters({ filters, setFilters }) {
                 ))}
             </select>
           </div>
-          <div className="flex items-center space-x-4">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={filters.show_repeated}
-                onChange={(event) =>
-                  setFilters((filters) => ({
-                    ...filters,
-                    show_repeated: event.target.checked,
-                  }))
-                }
-              />
-              <span>Repeated</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={filters.show_not_repeated}
-                onChange={(event) =>
-                  setFilters((filters) => ({
-                    ...filters,
-                    show_not_repeated: event.target.checked,
-                  }))
-                }
-              />
-              <span>Not repeated</span>
-            </label>
-          </div>
+          <SegmentedControl.Container>
+            <SegmentedControl.Item
+              checked={!!filters.show_repeated}
+              onChange={(event) =>
+                setFilters((filters) => ({
+                  ...filters,
+                  show_repeated: event.target.checked,
+                }))
+              }
+              label="Repeated"
+            />
+            <SegmentedControl.Item
+              checked={!!filters.show_not_repeated}
+              onChange={(event) =>
+                setFilters((filters) => ({
+                  ...filters,
+                  show_not_repeated: event.target.checked,
+                }))
+              }
+              label="Not repeated"
+            />
+          </SegmentedControl.Container>
+          <SegmentedControl.Container>
+            <SegmentedControl.Item
+              checked={!filters.hide_official}
+              onChange={(event) =>
+                setFilters((filters) => ({
+                  ...filters,
+                  hide_official: !event.target.checked,
+                }))
+              }
+              label="Official routes"
+            />
+            <SegmentedControl.Item
+              checked={!filters.hide_not_official}
+              onChange={(event) =>
+                setFilters((filters) => ({
+                  ...filters,
+                  hide_not_official: !event.target.checked,
+                }))
+              }
+              label="Set by users"
+            />
+          </SegmentedControl.Container>
+          <SegmentedControl.Container>
+            <SegmentedControl.Item
+              checked={!filters.hide_active}
+              onChange={(event) =>
+                setFilters((filters) => ({
+                  ...filters,
+                  hide_active: !event.target.checked,
+                }))
+              }
+              label="Active"
+            />
+            <SegmentedControl.Item
+              checked={!filters.hide_archived}
+              onChange={(event) =>
+                setFilters((filters) => ({
+                  ...filters,
+                  hide_archived: !event.target.checked,
+                }))
+              }
+              label="Archived"
+            />
+          </SegmentedControl.Container>
         </div>
       )}
     </div>
