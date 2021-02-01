@@ -33,19 +33,15 @@ export default function CameraInput({ onClose, onChange }) {
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (video && cameraParams.stream) {
-      video.srcObject = cameraParams.stream;
-    }
-
     return () => {
-      if (cameraParams.stream) {
-        cameraParams.stream.getTracks().forEach((track) => {
+      const video = videoRef.current;
+      if (video && video.srcObject) {
+        video.srcObject.getTracks().forEach((track) => {
           track.stop();
         });
       }
     };
-  }, [cameraParams.stream]);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -53,9 +49,9 @@ export default function CameraInput({ onClose, onChange }) {
       navigator.mediaDevices
         .getUserMedia({ video: { facingMode: cameraParams.facingMode } })
         .then((stream) => {
+          video.srcObject = stream;
           setCameraParams((params) => ({
             ...params,
-            stream,
             permission: "granted",
           }));
           navigator.mediaDevices.enumerateDevices().then((r) =>
@@ -72,6 +68,12 @@ export default function CameraInput({ onClose, onChange }) {
   }, [cameraParams.facingMode, cameraParams.supported, cameraEnabled]);
 
   const switchCamera = useCallback(() => {
+    const video = videoRef.current;
+    if (video && video.srcObject) {
+      video.srcObject.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
     setCameraParams((params) => ({
       ...params,
       facingMode: params.facingMode === "environment" ? "user" : "environment",
@@ -96,7 +98,7 @@ export default function CameraInput({ onClose, onChange }) {
       const imgData = canvas.toDataURL("image/jpeg");
       onChange(imgData);
     }
-  }, []);
+  }, [onChange]);
 
   return (
     <div className="h-screen pt-safe pl-safe pb-safe pr-safe flex flex-col items-center justify-center bg-black text-white">
