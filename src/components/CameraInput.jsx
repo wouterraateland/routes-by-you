@@ -33,15 +33,26 @@ export default function CameraInput({ onClose, onChange }) {
   }, []);
 
   useEffect(() => {
+    const video = videoRef.current;
+    if (video && video.srcObject) {
+      video.srcObject.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+    video.srcObject = cameraParams.stream;
+
     return () => {
       const video = videoRef.current;
+      cameraParams.stream?.getTracks().forEach((track) => {
+        track.stop();
+      });
       if (video && video.srcObject) {
         video.srcObject.getTracks().forEach((track) => {
           track.stop();
         });
       }
     };
-  }, []);
+  }, [cameraParams.stream]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -49,9 +60,9 @@ export default function CameraInput({ onClose, onChange }) {
       navigator.mediaDevices
         .getUserMedia({ video: { facingMode: cameraParams.facingMode } })
         .then((stream) => {
-          video.srcObject = stream;
           setCameraParams((params) => ({
             ...params,
+            stream,
             permission: "granted",
           }));
           navigator.mediaDevices.enumerateDevices().then((r) =>
@@ -68,19 +79,10 @@ export default function CameraInput({ onClose, onChange }) {
   }, [cameraParams.facingMode, cameraParams.supported, cameraEnabled]);
 
   const switchCamera = useCallback(() => {
-    const video = videoRef.current;
-    if (video && video.srcObject) {
-      video.srcObject.getTracks().forEach((track) => {
-        track.stop();
-      });
-    }
-    setTimeout(() => {
-      setCameraParams((params) => ({
-        ...params,
-        facingMode:
-          params.facingMode === "environment" ? "user" : "environment",
-      }));
-    });
+    setCameraParams((params) => ({
+      ...params,
+      facingMode: params.facingMode === "environment" ? "user" : "environment",
+    }));
   }, []);
 
   const takePhoto = useCallback(() => {
