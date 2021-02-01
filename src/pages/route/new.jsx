@@ -16,10 +16,10 @@ import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
 import FlyOut from "components/ui/FlyOut";
-import ImageInput from "components/ui/ImageInput";
 import Input from "components/ui/Input";
 import Textarea from "components/ui/Textarea";
 import RouteSettingTutorial from "components/RouteSettingTutorial";
+import CameraInput from "components/CameraInput";
 
 function getPositionOnImage(event, { scale }) {
   const rect = event.target.getBoundingClientRect();
@@ -457,22 +457,10 @@ export default function NewRoute({ auth }) {
           )}
         </div>
       ) : (
-        <div className="h-screen flex flex-col items-center justify-center space-y-4">
-          <Button
-            className="px-4 py-2 rounded-md border hover:bg-gray-100 font-bold"
-            onClick={() => Router.back()}
-          >
-            Cancel
-          </Button>
-          <ImageInput
-            compression={{ maxArea: 640 * 1280 }}
-            className="w-64 h-64 rounded-md border"
-            value={route.image}
-            onChange={({ data }) =>
-              setRoute((route) => ({ ...route, image: data }))
-            }
-          />
-        </div>
+        <CameraInput
+          onClose={() => Router.back()}
+          onChange={(image) => setRoute((route) => ({ ...route, image }))}
+        />
       )}
       <RouteSettingTutorial />
     </>

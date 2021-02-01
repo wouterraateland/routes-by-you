@@ -7,18 +7,29 @@ import Camera from "components/icons/Camera";
 import Cross from "components/icons/Cross";
 import Button from "./Button";
 
-const HiddenImageInput = ({ onChange }) => (
-  <input
-    className="hidden absolute inset-0"
-    type="file"
-    accept="image/*"
-    onChange={(event) => {
-      if (event.target.files.length === 1) {
-        onChange(event.target.files[0]);
-      }
-    }}
-  />
-);
+export function HiddenImageInput({ compression, onChange }) {
+  const _onChange = useCallback(
+    async (file) => {
+      const image = await fileToImage(file);
+      const compressedImage = await compressImage(image, compression);
+      onChange({ file, data: compressedImage });
+    },
+    [compression, onChange]
+  );
+
+  return (
+    <input
+      className="hidden absolute inset-0"
+      type="file"
+      accept="image/*"
+      onChange={(event) => {
+        if (event.target.files.length === 1) {
+          _onChange(event.target.files[0]);
+        }
+      }}
+    />
+  );
+}
 
 export default function ImageInput({
   value,
@@ -31,15 +42,6 @@ export default function ImageInput({
   ...props
 }) {
   const containerRef = useRef(null);
-
-  const _onChange = useCallback(
-    async (file) => {
-      const image = await fileToImage(file);
-      const compressedImage = await compressImage(image, compression);
-      onChange({ file, data: compressedImage });
-    },
-    [compression, onChange]
-  );
 
   return (
     <div className="space-y-4">
@@ -63,7 +65,11 @@ export default function ImageInput({
               <Camera className="absolute inset-0 m-auto h-4" />
             )
           )}
-          <HiddenImageInput onChange={_onChange} disabled={disabled} />
+          <HiddenImageInput
+            onChange={onChange}
+            compression={compression}
+            disabled={disabled}
+          />
         </label>
         {value && (
           <Button
