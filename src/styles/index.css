@@ -20,6 +20,11 @@
   height: calc(100 * var(--vh));
 }
 
+.max-h-available {
+  max-height: 100vh;
+  max-height: calc(100 * var(--vh));
+}
+
 pinch-zoom {
   display: block;
   overflow: hidden;

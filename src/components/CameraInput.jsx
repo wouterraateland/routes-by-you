@@ -14,6 +14,7 @@ export default function CameraInput({ onClose, onChange }) {
   const canvasRef = useRef();
   const videoRef = useRef();
 
+  const [orientation, setOrientation] = useState("portrait");
   const [cameraParams, setCameraParams] = useState({
     supported: undefined,
     number: 0,
@@ -30,6 +31,18 @@ export default function CameraInput({ onClose, onChange }) {
     const supported =
       navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
     setCameraParams((params) => ({ ...params, supported }));
+  }, []);
+
+  useEffect(() => {
+    const onResize = () =>
+      setOrientation(
+        window.innerWidth < window.innerHeight ? "portrait" : "landscape"
+      );
+
+    onResize();
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   useEffect(() => {
@@ -106,19 +119,32 @@ export default function CameraInput({ onClose, onChange }) {
   }, [onChange]);
 
   return (
-    <div className="min-h-available pt-safe pl-safe pb-safe pr-safe flex flex-col items-center justify-center bg-black text-white">
+    <div
+      className={cx(
+        "pt-safe pl-safe pb-safe pr-safe flex items-stretch justify-center bg-black text-white",
+        orientation === "portrait" ? "min-h-available flex-col" : ""
+      )}
+    >
       <Button
-        className="absolute z-10 top-0 left-0 m-4 p-2 rounded-md bg-white bg-opacity-0 hover:bg-opacity-10"
+        className="absolute z-10 top-0 left-0 m-4 p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-75"
         onClick={onClose}
       >
         <Cross className="h-4" />
       </Button>
-      <div className="flex w-full flex-grow">
+      <div className="flex flex-grow">
         {cameraParams.permission === "denied" ? (
           <p className="m-auto opacity-50">Camera permission denied</p>
         ) : cameraEnabled ? (
           <>
-            <video ref={videoRef} autoPlay muted playsInline />
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              className={cx("w-full object-contain", {
+                "h-available": orientation === "landscape",
+              })}
+            />
             <canvas ref={canvasRef} className="hidden" />
           </>
         ) : cameraParams.supported ? (
@@ -140,7 +166,12 @@ export default function CameraInput({ onClose, onChange }) {
           </Card>
         )}
       </div>
-      <div className="w-full flex p-4 items-center justify-around">
+      <div
+        className={cx(
+          "flex p-4 items-center justify-around",
+          orientation === "portrait" ? "" : "flex-col"
+        )}
+      >
         <div
           className={cx("space-y-2 text-center", {
             "opacity-0 pointer-events-none": cameraParams.number <= 1,
