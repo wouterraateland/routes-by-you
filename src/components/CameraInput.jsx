@@ -74,10 +74,13 @@ export default function CameraInput({ onClose, onChange }) {
         track.stop();
       });
     }
-    setCameraParams((params) => ({
-      ...params,
-      facingMode: params.facingMode === "environment" ? "user" : "environment",
-    }));
+    setTimeout(() => {
+      setCameraParams((params) => ({
+        ...params,
+        facingMode:
+          params.facingMode === "environment" ? "user" : "environment",
+      }));
+    });
   }, []);
 
   const takePhoto = useCallback(() => {
@@ -101,7 +104,7 @@ export default function CameraInput({ onClose, onChange }) {
   }, [onChange]);
 
   return (
-    <div className="h-screen pt-safe pl-safe pb-safe pr-safe flex flex-col items-center justify-center bg-black text-white">
+    <div className="min-h-available pt-safe pl-safe pb-safe pr-safe flex flex-col items-center justify-center bg-black text-white">
       <Button
         className="absolute z-10 top-0 left-0 m-4 p-2 rounded-md bg-white bg-opacity-0 hover:bg-opacity-10"
         onClick={onClose}
@@ -141,12 +144,12 @@ export default function CameraInput({ onClose, onChange }) {
             "opacity-0 pointer-events-none": cameraParams.number <= 1,
           })}
         >
-          <button
+          <Button
             className="p-2 rounded-full bg-white bg-opacity-0 hover:bg-opacity-10 cursor-pointer"
             onClick={switchCamera}
           >
             <Rotate className="h-6" />
-          </button>
+          </Button>
           <p className="text-xs opacity-50">Switch</p>
         </div>
         <Button

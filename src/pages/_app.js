@@ -6,6 +6,7 @@ import useAuth from "hooks/useAuth";
 
 import ErrorBoundary from "containers/ErrorBoundary";
 import SSRSuspense from "containers/SSRSuspense";
+import VisibleHeightObserver from "containers/VisibleHeightObserver";
 
 import Head from "next/head";
 import Notifications from "components/notifications";
@@ -35,6 +36,7 @@ export default function MyApp({ Component, pageProps }) {
           content="width=device-width, initial-scale=1.0, viewport-fit=cover"
         />
       </Head>
+      <VisibleHeightObserver />
       <SSRSuspense
         fallback={
           <div className="flex items-center justify-center h-screen">

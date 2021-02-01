@@ -30,7 +30,7 @@ function getPositionOnImage(event, { scale }) {
 }
 
 export default function NewRoute({ auth }) {
-  useEffect(() => import("pinch-zoom-element"), []);
+  useEffect(() => import("web-components/pinch-zoom"), []);
   const pinchZoomRef = useRef();
   const imgRef = useRef();
 
@@ -138,7 +138,7 @@ export default function NewRoute({ auth }) {
         <title>New route | Routes by You</title>
       </Head>
       {route.image ? (
-        <div className="absolute inset-0 h-screen flex flex-col bg-gray-50">
+        <div className="absolute inset-0 h-available flex flex-col bg-gray-50">
           <div className="sticky top-0 pt-safe z-10 border-b bg-white">
             <div className="max-w-xl mx-auto flex items-center justify-between p-2">
               {step === 0 && (

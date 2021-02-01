@@ -12,7 +12,7 @@ export default function RouteSettingTutorial() {
 
   return completed ? null : (
     <Portal>
-      <div className="fixed top-0 left-0 flex items-center justify-center w-screen h-screen bg-black bg-opacity-75">
+      <div className="fixed z-50 top-0 left-0 flex items-center justify-center w-screen h-available bg-black bg-opacity-75">
         <div className="flex flex-col justify-between w-full h-full m-auto max-w-sm sm:h-auto sm:rounded-md bg-blue-500 text-white">
           <div className="px-4 py-8 sm:px-8 space-y-8 overflow-auto">
             <h1 className="text-3xl font-bold">Routesetting 101</h1>
