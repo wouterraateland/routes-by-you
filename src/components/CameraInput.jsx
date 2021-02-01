@@ -52,7 +52,9 @@ export default function CameraInput({ onClose, onChange }) {
         track.stop();
       });
     }
-    video.srcObject = cameraParams.stream;
+    if (video) {
+      video.srcObject = cameraParams.stream;
+    }
 
     return () => {
       const video = videoRef.current;

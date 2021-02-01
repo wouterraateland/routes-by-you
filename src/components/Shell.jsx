@@ -35,7 +35,11 @@ export default function Shell({ children }) {
                   <Icon
                     className="h-6"
                     filled={pathname === href}
-                    color={pathname === href ? "blue" : "black"}
+                    color={
+                      Icon === RoutesByYou && pathname === href
+                        ? "blue"
+                        : undefined
+                    }
                   />
                   <span className="text-xs opacity-75">{label}</span>
                 </a>
