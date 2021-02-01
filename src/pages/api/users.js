@@ -2,7 +2,7 @@ import { getPagination } from "utils/queries";
 import { supabase } from "utils/supabase";
 
 export default async (req, res) => {
-  const { limit, page } = getPagination(req);
+  const { limit, offset } = getPagination(req);
 
   let query = supabase.from("users").select(
     `
@@ -21,7 +21,7 @@ export default async (req, res) => {
 
   query = query
     .order("created_at", { ascending: false })
-    .range(page * limit, (page + 1) * limit - 1);
+    .range(offset, offset + limit - 1);
 
   const { data: users, error } = await query;
 
