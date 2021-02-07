@@ -169,7 +169,6 @@ export async function getServerSideProps({ params }) {
         setter: setter_id (*),
         repeats (*),
         location: location_id (*),
-        comments: route_comments (*),
         reports: route_reports (*)
       `
     )

@@ -10,6 +10,7 @@ import useAuth from "hooks/useAuth";
 import Link from "next/link";
 import Camera from "components/icons/Camera";
 import Check from "components/icons/Check";
+import Comment from "components/icons/Comment";
 import Dots from "components/icons/Dots";
 import Repeat from "components/icons/Repeat";
 import RoutesByYou from "components/icons/RoutesByYou";
@@ -21,7 +22,7 @@ import StarRating from "components/StarRating";
 
 const DESCRIPTION_PREVIEW_LENGTH = 100;
 
-export default function RouteSummary({ route }) {
+export default function RouteSummary({ route, focused }) {
   const actionsOriginRef = useRef();
   const { user } = useAuth();
 
@@ -93,6 +94,13 @@ export default function RouteSummary({ route }) {
           )}
         </div>
         <div className="my-1 flex items-center space-x-2">
+          {!focused && (
+            <Link href={`/route/${route.id}/comments#comment`}>
+              <a className="p-2 rounded-md hover:bg-gray-100 text-gray-500">
+                <Comment className="h-6" />
+              </a>
+            </Link>
+          )}
           <Link href={`/route/${route.id}/repeat`}>
             <a
               className={cx(

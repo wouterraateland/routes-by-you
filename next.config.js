@@ -25,6 +25,11 @@ module.exports = {
   async redirects() {
     return [
       {
+        source: "/route/:routeId",
+        destination: "/route/:routeId/repeats",
+        permanent: true,
+      },
+      {
         source: "/user/:userId",
         destination: "/user/:userId/routes",
         permanent: true,

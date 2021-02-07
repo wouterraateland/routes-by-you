@@ -10,7 +10,10 @@ export default async (req, res) => {
       setter: setter_id (*),
       repeats (*),
       location: location_id (*),
-      comments: route_comments (*),
+      comments: route_comments (
+        *,
+        user: user_id (*)
+      ),
       reports: route_reports (*)
     `
   );
@@ -62,7 +65,9 @@ export default async (req, res) => {
 
   query = query
     .order("created_at", { ascending: false })
-    .range(offset, offset + limit - 1);
+    .order("created_at", { ascending: false, foreignTable: "route_comments" })
+    .range(offset, offset + limit - 1)
+    .limit(3, { foreignTable: "route_comments" });
 
   const { data: routes, error } = await query;
 

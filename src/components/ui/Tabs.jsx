@@ -8,11 +8,11 @@ export function Container({ children }) {
   return <div className="flex items-center">{children}</div>;
 }
 
-export function Tab({ href, label, Icon }) {
+export function Tab({ href, label, Icon, ...props }) {
   const router = useRouter();
-  const active = router.asPath === href;
+  const active = router.asPath.startsWith(href);
   return (
-    <Link href={href}>
+    <Link href={href} {...props}>
       <a
         className={cx(
           "flex items-center justify-center space-x-2 flex-grow p-2 sm:p-4 border-b-2 hover:bg-gray-100",

@@ -1,6 +1,10 @@
 import cx from "classnames";
+import { forwardRef } from "react";
 
-export default function Input({ className, prefix, suffix, ...props }) {
+export default forwardRef(function Input(
+  { className, prefix, suffix, ...props },
+  ref
+) {
   return (
     <div
       className={cx(
@@ -10,10 +14,11 @@ export default function Input({ className, prefix, suffix, ...props }) {
     >
       {prefix && <span className="text-gray-500">{prefix}</span>}
       <input
+        ref={ref}
         className="min-w-0 w-full flex-grow focus:outline-none"
         {...props}
       />
       {suffix && <span className="text-gray-500">{suffix}</span>}
     </div>
   );
-}
+});

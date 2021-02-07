@@ -3,29 +3,35 @@ import { api } from "utils/api";
 import { supabase } from "utils/supabase";
 import { pointsToFont, pointsToHsl } from "utils/grades";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Head from "next/head";
 import Cross from "components/icons/Cross";
 import Button from "components/ui/Button";
+import Tabs from "components/ui/Tabs";
 import RouteMeta from "components/RouteMeta";
 import RouteImage from "components/RouteImage";
 import RepeatThumb from "components/RepeatThumb";
 import RouteSummary from "components/RouteSummary";
+import Comment from "components/Comment";
+import CommentInput from "components/CommentInput";
 
-export default function ViewRoute({ auth, route }) {
-  const [shared, setShared] = useState(false);
-  useEffect(() => {
-    if (shared) {
-      const t = setTimeout(() => setShared(false), 1000);
-      return () => clearTimeout(t);
-    }
-  }, [shared]);
-
+export default function ViewRoute({ auth, route: initialRoute }) {
+  const [route, setRoute] = useState(initialRoute);
   const repeatsWithGrade = route.repeats.filter((repeat) => repeat.grade);
   const avgGrade =
     repeatsWithGrade.reduce((acc, repeat) => acc + repeat.grade, route.grade) /
     (repeatsWithGrade.length + 1);
+
+  const refresh = useCallback(async () => {
+    const freshRoute = await api.get(`route/${route.id}`);
+    setRoute(freshRoute);
+  }, [route.id]);
+
+  useEffect(() => {
+    const i = setInterval(refresh, 10000);
+    return () => clearInterval(i);
+  }, [refresh]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,17 +58,41 @@ export default function ViewRoute({ auth, route }) {
             </p>
           </div>
           <RouteImage route={route} />
-          <RouteSummary route={route} />
-          <div>
-            {route.repeats.length > 0 && (
-              <div className="pt-2 px-2 sm:px-4">
-                <h2 className="text-lg font-bold">Repeats</h2>
-              </div>
-            )}
-            {route.repeats.map((repeat) => (
+          <RouteSummary route={route} focused />
+          <Tabs.Container>
+            <Tabs.Tab
+              href={`/route/${route.id}/repeats`}
+              shallow
+              scroll={false}
+              replace
+              label={`${route.repeats.length} repeat${
+                route.repeats.length === 1 ? "" : "s"
+              }`}
+            />
+            <Tabs.Tab
+              href={`/route/${route.id}/comments`}
+              shallow
+              scroll={false}
+              replace
+              label={`${route.comments.length} comment${
+                route.comments.length === 1 ? "" : "s"
+              }`}
+            />
+          </Tabs.Container>
+          {Router.query.tab === "repeats" ? (
+            route.repeats.map((repeat) => (
               <RepeatThumb key={repeat.id} repeat={repeat} />
-            ))}
-          </div>
+            ))
+          ) : (
+            <>
+              <div className="p-2 space-y-2">
+                {route.comments.map((comment) => (
+                  <Comment key={comment.id} comment={comment} />
+                ))}
+              </div>
+              <CommentInput routeId={route.id} onSubmit={refresh} />
+            </>
+          )}
         </div>
         {route.setter_id === auth?.user?.id && (
           <div className="flex items-center space-x-4 p-4 sm:p-0">
@@ -103,14 +133,18 @@ export async function getServerSideProps({ params }) {
         setter: setter_id (*),
         repeats (
           *,
-          user:user_id (*)
+          user: user_id (*)
         ),
         location: location_id (*),
-        comments: route_comments (*),
+        comments: route_comments (
+          *,
+          user: user_id (*)
+        ),
         reports: route_reports (*)
       `
     )
     .eq("id", routeId)
+    .order("created_at", { ascending: false, foreignTable: "route_comments" })
     .single();
   if (error) {
     console.error(error);
