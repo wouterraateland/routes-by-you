@@ -2,9 +2,11 @@ import { v4 as uuidv4 } from "uuid";
 import cx from "classnames";
 
 import { between } from "utils/math";
+import { rotateImageBase64 } from "utils/images";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
+import Rotate from "components/icons/Rotate";
 import Button from "components/ui/Button";
 
 function getPositionOnImage(event, { scale }) {
@@ -41,36 +43,42 @@ export default function RouteSettingHoldsInput({
       holds: route.holds.filter((hold) => hold.id !== holdId),
     }));
 
-  useEffect(() => {
+  const resize = useCallback(() => {
     const pinchZoom = pinchZoomRef.current;
     const img = imgRef.current;
-    if (pinchZoom && img) {
-      const resize = () => {
-        const cW = pinchZoom.offsetWidth;
-        const cH = pinchZoom.offsetHeight;
-        const scale = Math.min(cW / img.naturalWidth, cH / img.naturalHeight);
-        const iW = scale * img.naturalWidth;
-        const iH = scale * img.naturalHeight;
 
-        pinchZoom.setTransform({
-          scale,
-          x: (cW - iW) / 2,
-          y: (cH - iH) / 2,
-        });
-      };
+    const cW = pinchZoom.offsetWidth;
+    const cH = pinchZoom.offsetHeight;
+    const scale = Math.min(cW / img.naturalWidth, cH / img.naturalHeight);
+    const iW = scale * img.naturalWidth;
+    const iH = scale * img.naturalHeight;
+
+    pinchZoom.setTransform({
+      scale,
+      x: (cW - iW) / 2,
+      y: (cH - iH) / 2,
+    });
+  }, []);
+
+  const fixBounds = useCallback(() => {
+    const pinchZoom = pinchZoomRef.current;
+    const img = imgRef.current;
+
+    const cW = pinchZoom.offsetWidth;
+    const cH = pinchZoom.offsetHeight;
+    const iW = pinchZoom.scale * img.naturalWidth;
+    const iH = pinchZoom.scale * img.naturalHeight;
+
+    pinchZoom.setTransform({
+      x: iW < cW ? (cW - iW) / 2 : between(cW - iW, 0)(pinchZoom.x),
+      y: iH < cH ? (cH - iH) / 2 : between(cH - iH, 0)(pinchZoom.y),
+    });
+  }, []);
+
+  useEffect(() => {
+    const pinchZoom = pinchZoomRef.current;
+    if (pinchZoom) {
       resize();
-
-      const fixBounds = () => {
-        const cW = pinchZoom.offsetWidth;
-        const cH = pinchZoom.offsetHeight;
-        const iW = pinchZoom.scale * img.naturalWidth;
-        const iH = pinchZoom.scale * img.naturalHeight;
-
-        pinchZoom.setTransform({
-          x: iW < cW ? (cW - iW) / 2 : between(cW - iW, 0)(pinchZoom.x),
-          y: iH < cH ? (cH - iH) / 2 : between(cH - iH, 0)(pinchZoom.y),
-        });
-      };
 
       pinchZoom.addEventListener("change", fixBounds);
       window.addEventListener("resize", resize);
@@ -79,7 +87,7 @@ export default function RouteSettingHoldsInput({
         window.removeEventListener("resize", resize);
       };
     }
-  }, [route.image, step]);
+  }, [fixBounds, resize, route.image, step]);
 
   return (
     <>
@@ -158,13 +166,32 @@ export default function RouteSettingHoldsInput({
         </div>
       </pinch-zoom>
       {step === 0 && route.holds.length === 0 && (
-        <div className="fixed bottom-0 right-0 m-4">
-          <Button
-            onClick={() => setStep(3)}
-            className="rounded-md px-3 py-1 bg-white border"
-          >
-            Continue without holds
-          </Button>
+        <div className="fixed left-0 bottom-0 right-0 m-4">
+          <div className="flex items-center justify-between">
+            <Button
+              className="flex items-center space-x-2 rounded-md px-3 py-1 bg-white border"
+              onClick={() => {
+                setRoute((route) => ({
+                  ...route,
+                  image: rotateImageBase64(route.image),
+                }));
+                setTimeout(() => {
+                  resize();
+                  fixBounds();
+                });
+              }}
+              hint="Rotate"
+            >
+              <Rotate className="h-4" />
+              <span>90&deg;</span>
+            </Button>
+            <Button
+              className="rounded-md px-3 py-1 bg-white border"
+              onClick={() => setStep(3)}
+            >
+              Continue without holds
+            </Button>
+          </div>
         </div>
       )}
     </>

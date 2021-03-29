@@ -1,14 +1,15 @@
-const urlToImage = (url) =>
-  new Promise((resolve, reject) => {
+export function urlToImage(url) {
+  return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.onload = () => resolve(img);
     img.onerror = (error) => reject(error);
     img.src = url;
   });
+}
 
-const fileToImage = (file) =>
-  new Promise((resolve) => {
+export function fileToImage(file) {
+  return new Promise((resolve) => {
     const reader = new FileReader();
 
     reader.onload = function (event) {
@@ -19,8 +20,9 @@ const fileToImage = (file) =>
 
     reader.readAsDataURL(file);
   });
+}
 
-const rotateImage = (img, compression) => {
+export function rotateImage(img, compression) {
   const canvas = document.createElement("canvas");
   canvas.width = img.height;
   canvas.height = img.width;
@@ -37,9 +39,26 @@ const rotateImage = (img, compression) => {
 
   const { type, q } = { type: "image/jpeg", q: 0.75, ...compression };
   return canvas.toDataURL(type, q);
-};
+}
 
-const compressImage = (img, compression) => {
+export function rotateImageBase64(base64) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  var img = new Image();
+  img.src = base64;
+
+  canvas.height = img.width;
+  canvas.width = img.height;
+
+  ctx.rotate((90 * Math.PI) / 180);
+  ctx.translate(0, -canvas.width);
+  ctx.drawImage(img, 0, 0);
+
+  return canvas.toDataURL("image/jpeg", 100);
+}
+
+export function compressImage(img, compression) {
   const { maxArea, type, q } = {
     maxArea: 640 * 320,
     q: 0.75,
@@ -56,6 +75,4 @@ const compressImage = (img, compression) => {
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
   return canvas.toDataURL(type, q);
-};
-
-export { urlToImage, fileToImage, rotateImage, compressImage };
+}

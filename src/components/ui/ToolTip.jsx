@@ -45,10 +45,10 @@ export default function ToolTip({
       switch (_direction) {
         case "top":
           setStyle(toolTip, {
-            top: undefined,
+            top: "auto",
             left: rect.x + rect.width / 2,
             bottom: wHeight - rect.y,
-            right: undefined,
+            right: "auto",
             transform: `translate(-50%, 0)`,
             maxWidth: Math.min(maxWidth, wWidth),
           });
@@ -56,8 +56,8 @@ export default function ToolTip({
         case "left":
           setStyle(toolTip, {
             top: rect.y + rect.height / 2,
-            left: undefined,
-            bottom: undefined,
+            left: "auto",
+            bottom: "auto",
             right: rect.x,
             transform: `translate(0, -50%)`,
             maxWidth: Math.min(maxWidth, rect.x),
@@ -67,8 +67,8 @@ export default function ToolTip({
           setStyle(toolTip, {
             top: rect.y + rect.height,
             left: rect.x + rect.width / 2,
-            bottom: undefined,
-            right: undefined,
+            bottom: "auto",
+            right: "auto",
             transform: `translate(-50%, 0)`,
             maxWidth: Math.min(maxWidth, wWidth),
           });
@@ -77,8 +77,8 @@ export default function ToolTip({
           setStyle(toolTip, {
             top: rect.y + rect.height / 2,
             left: rect.x + rect.width,
-            bottom: undefined,
-            right: undefined,
+            bottom: "auto",
+            right: "auto",
             transform: `translate(0, -50%)`,
             maxWidth: Math.min(maxWidth, wWidth - (rect.x + rect.width)),
           });
