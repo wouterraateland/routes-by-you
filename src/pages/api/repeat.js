@@ -69,8 +69,22 @@ export default async (req, res) => {
         ...value,
       },
     ]);
+
     if (insertRes.error) {
       return res.status(500).end(insertRes.error.message);
+    }
+
+    const repeat = insertRes.data[0];
+
+    if (req.body.comment) {
+      await supabase.from("route_comments").insert([
+        {
+          route_id: req.body.route_id,
+          repeat_id: repeat.id,
+          user_id: user.id,
+          text: req.body.comment,
+        },
+      ]);
     }
 
     return res.status(200).json(insertRes.data[0]);

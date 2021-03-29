@@ -9,7 +9,7 @@ export default async (req, res) => {
       `
         *,
         setter: setter_id (*),
-        repeats (
+        repeats: repeats!route_id (
           *,
           user: user_id (*)
         ),

@@ -2,8 +2,9 @@ import { pointsToHsl } from "utils/grades";
 
 import { useContext, useEffect, useRef } from "react";
 
-import MapboxMap from "components/MapboxMap";
 import { Layer, Feature, MapContext } from "react-mapbox-gl";
+import MapboxMap from "components/MapboxMap";
+import NamedLocationsLayer from "components/NamedLocationsLayer";
 
 const circleLayout = {
   visibility: "visible",
@@ -29,7 +30,9 @@ export default function RouteLocator({ route }) {
       className="h-64 relative"
     >
       <InitialProps route={route} />
+      <NamedLocationsLayer />
       <Layer
+        id="location"
         type="circle"
         layout={circleLayout}
         paint={{

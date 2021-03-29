@@ -8,7 +8,7 @@ export default async (req, res) => {
     `
       *,
       routes: routes!setter_id (id),
-      repeats (id)
+      repeats: repeats!user_id (id)
     `
   );
 

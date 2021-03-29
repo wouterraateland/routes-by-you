@@ -8,7 +8,7 @@ export default async (req, res) => {
     `
       *,
       setter: setter_id (*),
-      repeats (*),
+      repeats: repeats!route_id (*),
       location: location_id (*),
       comments: route_comments (
         *,

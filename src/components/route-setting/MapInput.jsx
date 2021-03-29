@@ -26,26 +26,25 @@ function InitialParams({ route }) {
   return null;
 }
 
-export default function LocationInput({ route, setRoute, ...props }) {
+export default function LocationInput({ route, onChange, ...props }) {
   const setGeometry = useCallback(
-    (geometry) => setRoute((route) => ({ ...route, geometry: geometry })),
-    [setRoute]
+    (geometry) => onChange("geometry", geometry),
+    [onChange]
   );
   const handleCenter = useCallback(
-    (map, position) =>
-      setRoute((route) => {
-        if (route.geometry === null) {
-          map.setCenter([position.coords.longitude, position.coords.latitude]);
-          map.setZoom(16);
-          return {
-            ...route,
-            geometry: [position.coords.longitude, position.coords.latitude],
-          };
-        } else {
-          return route;
-        }
-      }),
-    [setRoute]
+    (map, position) => {
+      if (route.geometry === null) {
+        map.setCenter([position.coords.longitude, position.coords.latitude]);
+        map.setZoom(16);
+        onChange("geometry", [
+          position.coords.longitude,
+          position.coords.latitude,
+        ]);
+      } else {
+        return route;
+      }
+    },
+    [route.geometry, onChange]
   );
 
   return (
@@ -69,7 +68,7 @@ export default function LocationInput({ route, setRoute, ...props }) {
               />
             )}
           </Layer>
-          <NamedLocationsLayer route={route} setRoute={setRoute} />
+          <NamedLocationsLayer route={route} onChange={onChange} />
         </ImagesLayer>
         {!route.location_id && (
           <MapLocationCenterer watch={false} onCenter={handleCenter} />

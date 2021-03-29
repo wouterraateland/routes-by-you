@@ -40,7 +40,7 @@ function generateGeoJSON(locations) {
   };
 }
 
-export default function NamedLocationsLayer({ route, setRoute }) {
+export default function NamedLocationsLayer({ route, onChange }) {
   const prevSelectedRef = useRef();
   const map = useContext(MapContext);
   const namedLocationsResource = useMemo(
@@ -62,44 +62,40 @@ export default function NamedLocationsLayer({ route, setRoute }) {
     namedLocations,
   ]);
 
-  useEffect(() => {
-    if (route.location_id !== prevSelectedRef.current) {
-      prevSelectedRef.current = route.location_id;
-      if (route.location_id) {
-        const selectedLocation = namedLocationsWithCenter.find(
-          (location) => location.id === route.location_id
-        );
-        if (selectedLocation) {
-          map.flyTo({ center: selectedLocation.center, zoom: 16 });
+  const routeGeometry = route?.geometry;
+  const routeLocationId = route?.location_id;
 
-          if (
-            !route.geometry ||
-            !contains(selectedLocation.geometry, point(route.geometry))
-          ) {
-            setRoute((route) => ({
-              ...route,
-              geometry: selectedLocation.center,
-            }));
+  useEffect(() => {
+    if (route && onChange) {
+      if (routeLocationId !== prevSelectedRef.current) {
+        prevSelectedRef.current = routeLocationId;
+        if (routeLocationId) {
+          const selectedLocation = namedLocationsWithCenter.find(
+            (location) => location.id === routeLocationId
+          );
+          if (selectedLocation) {
+            map.flyTo({ center: selectedLocation.center, zoom: 16 });
+
+            if (
+              !routeGeometry ||
+              !contains(selectedLocation.geometry, point(routeGeometry))
+            ) {
+              onChange("geometry", selectedLocation.center);
+            }
           }
         }
       }
-    }
 
-    if (route.geometry) {
-      const matchingLocation = namedLocationsWithCenter.find((location) =>
-        contains(location.geometry, point(route.geometry))
-      );
-      if (matchingLocation && matchingLocation.id !== route.location_id) {
-        setRoute((route) => ({ ...route, location_id: matchingLocation.id }));
+      if (routeGeometry) {
+        const matchingLocation = namedLocationsWithCenter.find((location) =>
+          contains(location.geometry, point(routeGeometry))
+        );
+        if (matchingLocation && matchingLocation.id !== routeLocationId) {
+          onChange("location_id", matchingLocation.id);
+        }
       }
     }
-  }, [
-    map,
-    namedLocationsWithCenter,
-    route.geometry,
-    route.location_id,
-    setRoute,
-  ]);
+  }, [map, namedLocationsWithCenter, routeGeometry, routeLocationId, onChange]);
 
   return (
     <GeoJSONLayer

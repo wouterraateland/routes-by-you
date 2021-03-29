@@ -10,7 +10,7 @@ import Input from "components/ui/Input";
 
 import Cross from "components/icons/Cross";
 
-export default function LocationField({ route, setRoute }) {
+export default function LocationField({ route, onChange }) {
   const [suggestedLocations, setSuggestedLocations] = useState([]);
 
   const location = suggestedLocations.find(
@@ -56,11 +56,7 @@ export default function LocationField({ route, setRoute }) {
               )}
               <span>{location.name}</span>
             </div>
-            <Button
-              onClick={() =>
-                setRoute((route) => ({ ...route, location_id: null }))
-              }
-            >
+            <Button onClick={() => onChange("location_id", null)}>
               <Cross className="h-4" />
             </Button>
           </div>
@@ -69,10 +65,7 @@ export default function LocationField({ route, setRoute }) {
             required
             value={route.location_string}
             onChange={(event) =>
-              setRoute((route) => ({
-                ...route,
-                location_string: event.target.value,
-              }))
+              onChange("location_string", event.target.value)
             }
             onFocus={() => setFocus(true)}
             onBlur={() => setTimeout(() => setFocus(false), 50)}
@@ -90,12 +83,7 @@ export default function LocationField({ route, setRoute }) {
             key={location.id}
             className="flex w-full items-center space-x-2 p-2 text-left truncate"
             bgColor="white"
-            onClick={() =>
-              setRoute((route) => ({
-                ...route,
-                location_id: location.id,
-              }))
-            }
+            onClick={() => onChange("location_id", location.id)}
           >
             <Avatar
               src={location.logo}

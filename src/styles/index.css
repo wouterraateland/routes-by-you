@@ -52,3 +52,27 @@ pinch-zoom > * {
   margin: 12px;
   border-radius: 4px;
 }
+
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-y-mandatory {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-align-start {
+  scroll-snap-align: start;
+}
+
+.snap-align-center {
+  scroll-snap-align: center;
+}
+
+.snap-align-end {
+  scroll-snap-align: end;
+}
+
+.fade-mask-x {
+  mask: linear-gradient(90deg, #0000, #000, #000, #000, #000, #0000);
+}

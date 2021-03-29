@@ -2,7 +2,6 @@ import Router from "next/router";
 
 import { api } from "utils/api";
 import { supabase } from "utils/supabase";
-import { fontByPoints, pointsToFont } from "utils/grades";
 
 import { useState } from "react";
 
@@ -11,7 +10,9 @@ import Cross from "components/icons/Cross";
 import Button from "components/ui/Button";
 import Field from "components/ui/Field";
 import Input from "components/ui/Input";
+import Textarea from "components/ui/Textarea";
 import StarRating from "components/StarRating";
+import GradeInput from "components/routes/GradeInput";
 
 export default function RepeatRoute({ auth, route }) {
   const { routeId } = Router.query;
@@ -24,6 +25,7 @@ export default function RepeatRoute({ auth, route }) {
       grade: null,
       rating: null,
       video: null,
+      comment: null,
       attempt: 1,
     }
   );
@@ -45,7 +47,7 @@ export default function RepeatRoute({ auth, route }) {
               <Cross className="h-4" />
             </Button>
           </div>
-          <h1 className="text-xl font-bold">{route.name}</h1>
+          <h1 className="text-xl font-bold truncate">{route.name}</h1>
           <div className="w-20 text-right">
             <Button
               disabled={!touched}
@@ -62,7 +64,7 @@ export default function RepeatRoute({ auth, route }) {
             </Button>
           </div>
         </header>
-        <div className="my-auto space-y-4">
+        <div className="my-auto py-4 space-y-4">
           <Field label="Attempt" className="text-center">
             <select
               className="w-48 px-4 py-2 rounded-md border focus:outline-none focus:border-blue-600 text-2xl font-bold"
@@ -87,25 +89,12 @@ export default function RepeatRoute({ auth, route }) {
             </select>
           </Field>
           <Field label="Grade" className="text-center">
-            <select
-              className="w-48 px-4 py-2 rounded-md border focus:outline-none focus:border-blue-600 text-2xl font-bold"
-              value={repeat.grade || ""}
-              onChange={(event) =>
-                setRepeat((repeat) => ({
-                  ...repeat,
-                  grade: event.target.value || null,
-                }))
+            <GradeInput
+              value={repeat.grade}
+              onChange={(grade) =>
+                setRepeat((repeat) => ({ ...repeat, grade }))
               }
-            >
-              <option value="">?</option>
-              {Object.keys(fontByPoints)
-                .sort()
-                .map((points) => (
-                  <option key={points} value={points}>
-                    {pointsToFont(points)}
-                  </option>
-                ))}
-            </select>
+            />
           </Field>
           <div className="text-center">
             <p className="text-gray-500">Rating</p>
@@ -119,6 +108,22 @@ export default function RepeatRoute({ auth, route }) {
               />
             </div>
           </div>
+          {!upstreamRepeat && (
+            <Field label="Comment" className="max-w-sm mx-auto px-4">
+              <Textarea
+                className="flex w-full px-4 py-2 rounded-md border focus:outline-none focus:border-blue-600 bg-white"
+                rows={4}
+                extraHeight={2}
+                value={repeat.comment || ""}
+                onChange={(event) =>
+                  setRepeat((repeat) => ({
+                    ...repeat,
+                    comment: event.target.value || null,
+                  }))
+                }
+              />
+            </Field>
+          )}
           <Field
             label="Link to video"
             hint="Youtube, Instagram, etc."
@@ -169,7 +174,7 @@ export async function getServerSideProps({ params }) {
       `
         *,
         setter: setter_id (*),
-        repeats (*),
+        repeats: repeats!route_id (*),
         location: location_id (*),
         reports: route_reports (*)
       `

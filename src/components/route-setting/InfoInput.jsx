@@ -1,5 +1,6 @@
-import { fontByPoints, pointsToFont } from "utils/grades";
 import { fetchRandomRouteName } from "utils/routes";
+
+import { useCallback } from "react";
 
 import SSRSuspense from "containers/SSRSuspense";
 
@@ -11,10 +12,16 @@ import Input from "components/ui/Input";
 import Loader from "components/ui/Loader";
 import Textarea from "components/ui/Textarea";
 
+import GradeInput from "components/routes/GradeInput";
 import LocationField from "./LocationField";
 import MapInput from "./MapInput";
 
 export default function RouteSettingInfoInput({ route, setRoute }) {
+  const setField = useCallback(
+    (field, value) => setRoute((route) => ({ ...route, [field]: value })),
+    [setRoute]
+  );
+
   return (
     <div className="w-full max-w-xl mx-auto space-y-4 p-4">
       <Field label="Route name">
@@ -58,29 +65,13 @@ export default function RouteSettingInfoInput({ route, setRoute }) {
         />
       </Field>
       <Field label="Grade">
-        <select
-          className="w-full px-4 py-2 rounded-md border focus:outline-none focus:border-blue-600 text-2xl font-bold bg-white"
-          required
+        <GradeInput
           value={route.grade}
-          onChange={(event) =>
-            setRoute((route) => ({
-              ...route,
-              grade: event.target.value,
-            }))
-          }
-        >
-          <option value="">?</option>
-          {Object.keys(fontByPoints)
-            .sort()
-            .map((points) => (
-              <option key={points} value={points}>
-                {pointsToFont(points)}
-              </option>
-            ))}
-        </select>
+          onChange={(grade) => setRoute((route) => ({ ...route, grade }))}
+        />
       </Field>
       <SSRSuspense fallback={<Loader />}>
-        <LocationField route={route} setRoute={setRoute} />
+        <LocationField route={route} onChange={setField} />
         <div>
           <p className="text-gray-500">
             Exact location (click to add / remove)
@@ -88,7 +79,7 @@ export default function RouteSettingInfoInput({ route, setRoute }) {
           <MapInput
             className="relative rounded-md h-64 md:h-96 overflow-hidden"
             route={route}
-            setRoute={setRoute}
+            setRoute={setField}
           />
         </div>
       </SSRSuspense>

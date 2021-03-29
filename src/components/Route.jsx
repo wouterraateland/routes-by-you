@@ -11,7 +11,7 @@ export default function Route({ route }) {
     route.repeats?.filter((repeat) => repeat.grade) ?? [];
   const avgGrade =
     repeatsWithGrade.reduce((acc, repeat) => acc + repeat.grade, route.grade) /
-    (repeatsWithGrade.length + 1);
+    (repeatsWithGrade.length + (route.grade ? 1 : 0));
 
   return (
     <div className="pb-4 sm:pb-0 sm:rounded-md sm:shadow-md bg-white">
