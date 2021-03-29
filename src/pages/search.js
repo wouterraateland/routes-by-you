@@ -31,7 +31,8 @@ export default function Search() {
         <div className="sticky top-0 z-50 pt-safe sm:rounded-b-md shadow-md bg-white">
           <div className="flex items-center sm:p-4 sm:space-x-4">
             <Button
-              className="p-4 sm:p-2 sm:rounded-md hover:bg-gray-100"
+              className="p-4 sm:p-2 sm:rounded-md"
+              bgColor="white"
               onClick={() => Router.back()}
             >
               <Cross className="h-4" />

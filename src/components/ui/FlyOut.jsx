@@ -51,10 +51,10 @@ export default function FlyOut({
       switch (_direction) {
         case "top":
           setStyle(flyOut, {
-            top: undefined,
-            left: isLeft ? rect.x : undefined,
+            top: "auto",
+            left: isLeft ? rect.x : "auto",
             bottom: wHeight - rect.y,
-            right: isLeft ? undefined : wWidth - rect.right,
+            right: isLeft ? "auto" : wWidth - rect.right,
             maxWidth: wWidth,
             maxHeight: rect.top,
           });
@@ -62,8 +62,8 @@ export default function FlyOut({
         case "left":
           setStyle(flyOut, {
             top: rect.y,
-            left: undefined,
-            bottom: undefined,
+            left: "auto",
+            bottom: "auto",
             right: rect.x,
             maxWidth: rect.x,
             maxHeight: wHeight,
@@ -72,9 +72,9 @@ export default function FlyOut({
         case "bottom":
           setStyle(flyOut, {
             top: rect.y + rect.height,
-            left: isLeft ? rect.x : undefined,
-            bottom: undefined,
-            right: isLeft ? undefined : wWidth - rect.right,
+            left: isLeft ? rect.x : "auto",
+            bottom: "auto",
+            right: isLeft ? "auto" : wWidth - rect.right,
             maxWidth: wWidth,
             maxHeight: wHeight - rect.bottom,
           });
@@ -83,8 +83,8 @@ export default function FlyOut({
           setStyle(flyOut, {
             top: rect.y,
             left: rect.x + rect.width,
-            bottom: undefined,
-            right: undefined,
+            bottom: "auto",
+            right: "auto",
             maxWidth: wWidth - (rect.x + rect.width),
             maxHeight: wHeight,
           });

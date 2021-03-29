@@ -38,7 +38,8 @@ export default function RepeatRoute({ auth, route }) {
         <header className="flex items-center justify-between p-2">
           <div className="w-20">
             <Button
-              className="p-2 rounded-md hover:bg-gray-100"
+              className="p-2 rounded-md"
+              bgColor="white"
               onClick={() => Router.back()}
             >
               <Cross className="h-4" />
@@ -136,7 +137,8 @@ export default function RepeatRoute({ auth, route }) {
           {repeat.id && (
             <div className="flex justify-center pt-4">
               <Button
-                className="px-4 py-2 rounded-md border text-red-600 hover:bg-gray-100"
+                className="px-4 py-2 rounded-md border text-red-600"
+                bgColor="white"
                 onClick={async () => {
                   await api.delete("repeat", {
                     body: { id: repeat.id },

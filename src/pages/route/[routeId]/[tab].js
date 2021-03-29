@@ -15,6 +15,7 @@ import RepeatThumb from "components/RepeatThumb";
 import RouteSummary from "components/RouteSummary";
 import Comment from "components/Comment";
 import CommentInput from "components/CommentInput";
+import RouteLocator from "components/routes/Locator";
 
 export default function ViewRoute({ auth, route: initialRoute }) {
   const [route, setRoute] = useState(initialRoute);
@@ -43,7 +44,8 @@ export default function ViewRoute({ auth, route: initialRoute }) {
           <div className="flex items-center justify-between p-2">
             <div className="flex items-center space-x-4">
               <Button
-                className="p-2 rounded-md hover:bg-gray-100"
+                className="p-2 rounded-md"
+                bgColor="white"
                 onClick={() => Router.back()}
               >
                 <Cross className="h-4" direction="left" />
@@ -60,6 +62,15 @@ export default function ViewRoute({ auth, route: initialRoute }) {
           <RouteImage route={route} />
           <RouteSummary route={route} focused />
           <Tabs.Container>
+            {route.geometry && (
+              <Tabs.Tab
+                href={`/route/${route.id}/location`}
+                shallow
+                scroll={false}
+                replace
+                label="Location"
+              />
+            )}
             <Tabs.Tab
               href={`/route/${route.id}/repeats`}
               shallow
@@ -79,11 +90,14 @@ export default function ViewRoute({ auth, route: initialRoute }) {
               }`}
             />
           </Tabs.Container>
-          {Router.query.tab === "repeats" ? (
+          {Router.query.tab === "location" && route.geometry && (
+            <RouteLocator route={route} />
+          )}
+          {Router.query.tab === "repeats" &&
             route.repeats.map((repeat) => (
               <RepeatThumb key={repeat.id} repeat={repeat} />
-            ))
-          ) : (
+            ))}
+          {Router.query.tab === "comments" && (
             <>
               <div className="p-2 space-y-2">
                 {route.comments.map((comment) => (
@@ -97,7 +111,8 @@ export default function ViewRoute({ auth, route: initialRoute }) {
         {route.setter_id === auth?.user?.id && (
           <div className="flex items-center space-x-4 p-4 sm:p-0">
             <Button
-              className="w-full px-4 py-2 rounded-md text-red-600 font-bold border bg-white hover:bg-gray-100"
+              className="w-full px-4 py-2 rounded-md text-red-600 font-bold border"
+              bgColor="white"
               onClick={async () => {
                 await api.delete("route", { body: { id: route.id } });
                 Router.back();
@@ -106,7 +121,8 @@ export default function ViewRoute({ auth, route: initialRoute }) {
               Delete route
             </Button>
             <Button
-              className="w-full px-4 py-2 rounded-md font-bold border bg-white hover:bg-gray-100"
+              className="w-full px-4 py-2 rounded-md font-bold border"
+              bgColor="white"
               onClick={() => Router.push(`/route/${route.id}/edit`)}
             >
               Edit route

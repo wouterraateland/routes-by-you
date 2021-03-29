@@ -9,14 +9,17 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.2.1",
+    "@turf/turf": "^6.3.0",
     "aws-sdk": "^2.828.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
+    "mapbox-gl": "^2.1.1",
     "next": "10.0.3",
     "pointer-tracker": "^2.0.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-error-boundary": "^3.1.0",
+    "react-mapbox-gl": "^5.1.1",
     "react-use-form-state": "^0.13.2",
     "uuid": "^8.3.2"
   },

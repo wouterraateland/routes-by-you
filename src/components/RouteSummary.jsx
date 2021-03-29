@@ -12,6 +12,7 @@ import Camera from "components/icons/Camera";
 import Check from "components/icons/Check";
 import Comment from "components/icons/Comment";
 import Dots from "components/icons/Dots";
+import Location from "components/icons/Location";
 import Repeat from "components/icons/Repeat";
 import RoutesByYou from "components/icons/RoutesByYou";
 import Share from "components/icons/Share";
@@ -119,14 +120,16 @@ export default function RouteSummary({ route, focused }) {
           </Link>
           <Button
             ref={actionsOriginRef}
-            className="p-2 rounded-md hover:bg-gray-100 text-gray-500"
+            className="p-2 rounded-md text-gray-500"
+            bgColor="white"
           >
             <Dots className="h-6" direction="vertical" />
           </Button>
         </div>
         <FlyOut originRef={actionsOriginRef}>
           <Button
-            className="flex items-center space-x-4 w-full p-4 hover:bg-gray-100"
+            className="flex items-center space-x-4 w-full p-4"
+            bgColor="white"
             onClick={async () => {
               await copyTextToClipboard(
                 `${process.env.NEXT_PUBLIC_PUBLIC_URL}/route/${route.id}`
@@ -139,7 +142,8 @@ export default function RouteSummary({ route, focused }) {
           </Button>
           {reportedBy.includes(user?.id) ? (
             <Button
-              className="flex items-center space-x-4 w-full p-4 hover:bg-gray-100"
+              className="flex items-center space-x-4 w-full p-4"
+              bgColor="white"
               onClick={async () => {
                 try {
                   await api.delete("report-route", {
@@ -159,7 +163,8 @@ export default function RouteSummary({ route, focused }) {
             </Button>
           ) : (
             <Button
-              className="flex items-center space-x-4 w-full p-4 hover:bg-gray-100"
+              className="flex items-center space-x-4 w-full p-4"
+              bgColor="white"
               onClick={async () => {
                 try {
                   await api.post("report-route", {
@@ -178,6 +183,15 @@ export default function RouteSummary({ route, focused }) {
           )}
         </FlyOut>
       </div>
+      {route.geometry && !focused && (
+        <Link href={`/route/${route.id}/location`}>
+          <a className="flex items-center space-x-1 text-sm text-blue-600">
+            <Location className="h-3" filled />
+            <span>Locate on map</span>
+          </a>
+        </Link>
+      )}
+
       {route.description &&
         (route.description.length > DESCRIPTION_PREVIEW_LENGTH ? (
           <p className="py-2">

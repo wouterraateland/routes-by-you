@@ -38,16 +38,18 @@ export default function RouteFilters() {
         <h2 className="text-3xl font-black">Your feed</h2>
         <div className="flex items-center space-x-2">
           <Button
-            className="p-2 rounded-md hover:bg-gray-100"
+            className="p-2 rounded-md"
+            bgColor="white"
             hint="Search"
             onClick={() => Router.push("/search")}
           >
             <Loop className="h-6" />
           </Button>
           <Button
-            className={cx("p-2 rounded-md hover:bg-gray-100", {
+            className={cx("p-2 rounded-md", {
               "text-blue-600": expanded,
             })}
+            bgColor="white"
             onClick={() => setExpanded(!expanded)}
             hint="Filter"
           >

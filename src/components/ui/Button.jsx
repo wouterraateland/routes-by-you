@@ -30,7 +30,10 @@ export default forwardRef(function Button(
           "focus:outline-none focus:ring-2",
           { "opacity-50 pointer-events-none": disabled },
           className,
-          bgColor && `bg-${bgColor}-600 hover:bg-${bgColor}-700`
+          bgColor &&
+            (bgColor === "white"
+              ? "bg-white hover:bg-gray-100"
+              : `bg-${bgColor}-600 hover:bg-${bgColor}-700`)
         )}
         {...props}
       >

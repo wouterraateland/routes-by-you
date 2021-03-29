@@ -18,17 +18,13 @@ module.exports = {
     NEXT_PUBLIC_PUBLIC_URL: process.env.PUBLIC_URL,
     NEXT_PUBLIC_SUPABASE_API_URL: process.env.SUPABASE_API_URL,
     NEXT_PUBLIC_SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
+    NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN: process.env.MAPBOX_PUBLIC_TOKEN,
   },
   images: {
     domains: ["routes-by-you.s3.eu-central-1.amazonaws.com"],
   },
   async redirects() {
     return [
-      {
-        source: "/route/:routeId",
-        destination: "/route/:routeId/repeats",
-        permanent: true,
-      },
       {
         source: "/user/:userId",
         destination: "/user/:userId/routes",

@@ -61,7 +61,8 @@ export default function EditRoute({ route }) {
           <div className="max-w-xl mx-auto flex items-center justify-between p-2">
             <Button
               type="button"
-              className="px-3 py-1 rounded-md hover:bg-gray-100 font-bold"
+              className="px-3 py-1 rounded-md font-bold"
+              bgColor="white"
               onClick={() => Router.back()}
             >
               Cancel
@@ -161,7 +162,8 @@ export default function EditRoute({ route }) {
                 <Button
                   type="button"
                   key={location.id}
-                  className="flex w-full items-center space-x-2 p-2 text-left hover:bg-gray-100 truncate"
+                  className="flex w-full items-center space-x-2 p-2 text-left truncate"
+                  bgColor="white"
                   onClick={() => formState.setField("location_id", location.id)}
                 >
                   <Avatar

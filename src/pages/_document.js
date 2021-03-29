@@ -6,6 +6,10 @@ export default class MyDocument extends Document {
       <Html>
         <Head>
           <link
+            href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css"
+            rel="stylesheet"
+          />
+          <link
             rel="apple-touch-icon"
             sizes="180x180"
             href="/apple-touch-icon.png"

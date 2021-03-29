@@ -69,7 +69,10 @@ export async function getServerSideProps({ params }) {
             repeats (*),
             location: location_id (*),
             location_string,
-            comments: route_comments (*),
+            comments: route_comments (
+              *,
+              user: user_id (*)
+            ),
             reports: route_reports (*)
           )
         )

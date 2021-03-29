@@ -15,7 +15,7 @@ export default forwardRef(function Input(
       {prefix && <span className="text-gray-500">{prefix}</span>}
       <input
         ref={ref}
-        className="min-w-0 w-full flex-grow focus:outline-none"
+        className="min-w-0 w-full flex-grow focus:outline-none bg-transparent"
         {...props}
       />
       {suffix && <span className="text-gray-500">{suffix}</span>}

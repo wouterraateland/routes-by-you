@@ -5,7 +5,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 export function Container({ children }) {
-  return <div className="flex items-center">{children}</div>;
+  return (
+    <div className="overflow-x-auto overflow-y-hidden flex items-center whitespace-nowrap disable-scrollbars">
+      {children}
+    </div>
+  );
 }
 
 export function Tab({ href, label, Icon, ...props }) {

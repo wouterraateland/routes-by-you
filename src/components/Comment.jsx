@@ -9,8 +9,8 @@ export default function Comment({ comment, thumb }) {
           <a>
             <Avatar
               className="w-8 h-8"
-              src={comment.user.avatar}
-              alt={comment.user.display_name}
+              src={comment.user?.avatar}
+              alt={comment.user?.display_name}
             />
           </a>
         </Link>
@@ -18,7 +18,7 @@ export default function Comment({ comment, thumb }) {
       <p>
         <Link href={`/user/${comment.user_id}`}>
           <a className="font-bold hover:underline">
-            {comment.user.display_name}
+            {comment.user?.display_name}
           </a>
         </Link>
         &nbsp;&nbsp;

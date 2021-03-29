@@ -17,6 +17,9 @@ export default async (req, res) => {
     grade: req.body.grade ? between(100, 1000)(req.body.grade || 100) : null,
     location_id: req.body.location_id,
     location_string: req.body.location_string,
+    geometry: Array.isArray(req.body.geometry)
+      ? `Point(${req.body.geometry.join(" ")})`
+      : null,
   };
 
   const routeId = req.body.id;
