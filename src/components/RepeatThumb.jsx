@@ -36,7 +36,7 @@ export default function RepeatThumb({ repeat }) {
               {formatDistanceToNow(new Date(repeat.created_at))} ago
             </span>
           </p>
-          <p className="flex space-x-2 text-gray-500">
+          <p className="flex items-center space-x-2 text-gray-500">
             {repeat.attempt === 1 ? (
               <span className="rounded-full bg-yellow-100 text-yellow-900 px-2 py-0.5 font-bold">
                 ⚡️ Flash
@@ -46,7 +46,7 @@ export default function RepeatThumb({ repeat }) {
             )}
             {repeat.grade && (
               <span
-                className="font-bold text-white rounded-full px-2 py-0.5"
+                className="font-bold text-white rounded-full px-2 text-sm"
                 style={{ backgroundColor: pointsToHsl(repeat.grade) }}
               >
                 {pointsToFont(repeat.grade)}

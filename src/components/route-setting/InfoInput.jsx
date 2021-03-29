@@ -79,7 +79,7 @@ export default function RouteSettingInfoInput({ route, setRoute }) {
           <MapInput
             className="relative rounded-md h-64 md:h-96 overflow-hidden"
             route={route}
-            setRoute={setField}
+            onChange={setField}
           />
         </div>
       </SSRSuspense>

@@ -111,6 +111,7 @@ export default function ViewRoute({ auth, route: initialRoute }) {
         {route.setter_id === auth?.user?.id && (
           <div className="flex items-center space-x-4 p-4 sm:p-0">
             <Button
+              type="button"
               className="w-full px-4 py-2 rounded-md text-red-600 font-bold border"
               bgColor="white"
               onClick={async () => {
@@ -121,6 +122,7 @@ export default function ViewRoute({ auth, route: initialRoute }) {
               Delete route
             </Button>
             <Button
+              type="button"
               className="w-full px-4 py-2 rounded-md font-bold border"
               bgColor="white"
               onClick={() => Router.push(`/route/${route.id}/edit`)}
