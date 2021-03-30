@@ -26,16 +26,29 @@ export default function RouteSettingHoldsInput({
   const pinchZoomRef = useRef();
   const imgRef = useRef();
 
+  const dragStateRef = useRef({
+    holdId: null,
+    hasMoved: false,
+    prev: { x: null, y: null },
+  });
+
   const addHold = (hold) =>
     setRoute((route) => ({ ...route, holds: route.holds.concat(hold) }));
 
-  const updateHold = (holdId, update) =>
-    setRoute((route) => ({
-      ...route,
-      holds: route.holds.map((hold) =>
-        hold.id === holdId ? { ...hold, ...update } : hold
-      ),
-    }));
+  const updateHold = useCallback(
+    (holdId, update) =>
+      setRoute((route) => ({
+        ...route,
+        holds: route.holds.map((hold) =>
+          hold.id === holdId
+            ? typeof update === "function"
+              ? update(hold)
+              : { ...hold, ...update }
+            : hold
+        ),
+      })),
+    []
+  );
 
   const deleteHold = (holdId) =>
     setRoute((route) => ({
@@ -89,6 +102,63 @@ export default function RouteSettingHoldsInput({
     }
   }, [fixBounds, resize, route.image, step]);
 
+  useEffect(() => {
+    const onMouseMove = (event) => {
+      const pos = { x: event.clientX, y: event.clientY };
+      if (dragStateRef.current.holdId) {
+        const pinchZoom = pinchZoomRef.current;
+        const img = imgRef.current;
+
+        const d = {
+          x: pos.x - dragStateRef.current.prev.x,
+          y: pos.y - dragStateRef.current.prev.y,
+        };
+
+        const cW = pinchZoom.offsetWidth;
+        const cH = pinchZoom.offsetHeight;
+        const iW = pinchZoom.scale * img.naturalWidth;
+        const iH = pinchZoom.scale * img.naturalHeight;
+
+        pinchZoom.setTransform({
+          x: iW < cW ? (cW - iW) / 2 : between(cW - iW, 0)(pinchZoom.x - d.x),
+          y: iH < cH ? (cH - iH) / 2 : between(cH - iH, 0)(pinchZoom.y - d.y),
+        });
+
+        if (d.x * d.x + d.y * d.y > 0) {
+          dragStateRef.current.hasMoved = true;
+        }
+
+        const scale = img.naturalWidth / img.width / pinchZoom.scale;
+        updateHold(dragStateRef.current.holdId, (hold) => ({
+          ...hold,
+          position: {
+            x: hold.position.x + scale * d.x,
+            y: hold.position.y + scale * d.y,
+          },
+        }));
+      }
+      dragStateRef.current.prev = pos;
+    };
+
+    const onMouseUp = () => {
+      setTimeout(() => {
+        dragStateRef.current = {
+          holdId: null,
+          hasMoved: false,
+          prev: { x: null, y: null },
+        };
+      });
+    };
+
+    window.addEventListener("pointermove", onMouseMove);
+    window.addEventListener("pointerup", onMouseUp);
+
+    return () => {
+      window.removeEventListener("pointermove", onMouseMove);
+      window.removeEventListener("pointerup", onMouseUp);
+    };
+  }, [updateHold]);
+
   return (
     <>
       <pinch-zoom ref={pinchZoomRef} class="flex flex-grow">
@@ -115,8 +185,9 @@ export default function RouteSettingHoldsInput({
             }
           />
           {route.holds?.map((hold) => (
-            <div
+            <button
               key={hold.id}
+              type="button"
               className={cx(
                 "absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 cursor-pointer border hold-marker",
                 hold.type === "finish"
@@ -136,8 +207,19 @@ export default function RouteSettingHoldsInput({
                   hold.size / 16
                 )}px`,
               }}
+              onPointerDown={(event) => {
+                event.preventDefault();
+                dragStateRef.current = {
+                  holdId: hold.id,
+                  prev: {
+                    x: event.clientX,
+                    y: event.clientY,
+                  },
+                };
+              }}
               onClick={() =>
-                step === 0
+                !dragStateRef.current.hasMoved &&
+                (step === 0
                   ? deleteHold(hold.id)
                   : updateHold(hold.id, {
                       type:
@@ -159,7 +241,7 @@ export default function RouteSettingHoldsInput({
                             ? "finish"
                             : hold.type
                           : hold.type,
-                    })
+                    }))
               }
             />
           ))}
