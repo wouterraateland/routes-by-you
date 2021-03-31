@@ -65,6 +65,9 @@ export async function getServerSideProps({ params }) {
           *,
           route: route_id (
             *,
+            route_tags: route_tags!route_id (
+              tag: tags (*)
+            ),
             setter: setter_id (*),
             location: location_id (*),
             location_string,

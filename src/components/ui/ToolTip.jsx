@@ -106,13 +106,18 @@ export default function ToolTip({
       return () => {
         origin.removeEventListener("mouseenter", show);
         origin.removeEventListener("mouseleave", hide);
+
+        setVisibility(false);
       };
     }
   }, [originRef, setPosition]);
 
   return (
     <Portal>
-      <div className="fixed pointer-events-none z-50" ref={toolTipRef}>
+      <div
+        className={cx("fixed pointer-events-none z-50", appear.enter)}
+        ref={toolTipRef}
+      >
         <p
           className={cx(
             "m-2 py-1 px-2 rounded-md text-sm text-left bg-gray-900 text-white",

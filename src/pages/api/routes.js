@@ -7,6 +7,9 @@ export default async (req, res) => {
   let query = supabase.from("routes").select(
     `
       *,
+      route_tags: route_tags!route_id (
+        tag: tags (*)
+      ),
       setter: setter_id (*),
       repeats: repeats!route_id (*),
       location: location_id (*),

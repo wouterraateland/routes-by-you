@@ -33,6 +33,8 @@ export default function RouteSettingTutorial() {
                   <p>
                     Touch to select holds.
                     <br />
+                    Drag to move holds.
+                    <br />
                     Touch again to remove.
                     <br />
                     Zoom in for smaller holds, zoom out for larger holds.

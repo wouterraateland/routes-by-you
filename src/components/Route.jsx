@@ -35,7 +35,7 @@ export default function Route({ route }) {
         <RouteSummary route={route} />
         {route.comments.length > 0 && (
           <div className="p-2 space-y-1">
-            {route.comments.length >= 1 && (
+            {route.comments.length >= 2 && (
               <Link href={`/route/${route.id}/comments`}>
                 <a className="block w-full text-gray-500">View all comments</a>
               </Link>

@@ -148,6 +148,9 @@ export async function getServerSideProps({ params }) {
     .select(
       `
         *,
+        route_tags: route_tags!route_id (
+          tag: tags (*)
+        ),
         setter: setter_id (*),
         repeats: repeats!route_id (
           *,

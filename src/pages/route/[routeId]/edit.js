@@ -17,12 +17,16 @@ import Input from "components/ui/Input";
 import Loader from "components/ui/Loader";
 import Textarea from "components/ui/Textarea";
 import GradeInput from "components/routes/GradeInput";
+import TagsInput from "components/routes/TagsInput";
 import LocationField from "components/route-setting/LocationField";
 import MapInput from "components/route-setting/MapInput";
+import { setMinus } from "utils/arrays";
 
 export default function EditRoute({ route }) {
+  const initialTags = route.route_tags.map((tag) => tag.tag.label) ?? [];
   const [formState, { text, textarea }] = useFormState({
     ...route,
+    tags: initialTags,
     geometry: route.geometry ? route.geometry.coordinates : null,
   });
 
@@ -55,6 +59,8 @@ export default function EditRoute({ route }) {
                 await api.post("route", {
                   body: {
                     ...formState.values,
+                    addedTags: setMinus(formState.values.tags, initialTags),
+                    removedTags: setMinus(initialTags, formState.values.tags),
                   },
                 });
                 Router.replace(`/route/${route.id}`);
@@ -80,6 +86,12 @@ export default function EditRoute({ route }) {
               rows={2}
               extraHeight={2}
               {...textarea("description")}
+            />
+          </Field>
+          <Field label="Tags">
+            <TagsInput
+              value={formState.values.tags}
+              onChange={(tags) => formState.setField("tags", tags)}
             />
           </Field>
           <Field label="Grade">
@@ -122,7 +134,10 @@ export async function getServerSideProps({ req, params }) {
     .select(
       `
         *,
-        location: location_id (*)
+        location: location_id (*),
+        route_tags (
+          tag: tags (*)
+        )
       `
     )
     .eq("id", routeId)

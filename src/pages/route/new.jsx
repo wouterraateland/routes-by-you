@@ -23,6 +23,7 @@ export default function NewRoute({ auth }) {
     location_id: null,
     location_string: "",
     geometry: null,
+    tags: [],
   });
 
   return (

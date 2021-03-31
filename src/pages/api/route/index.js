@@ -1,7 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
 import { getUser } from "utils/authServer";
+import { unique } from "utils/arrays";
 import { between } from "utils/math";
 import { supabase } from "utils/supabase";
+
+async function getTags(tags) {
+  const { data } = await supabase.from("tags").insert(
+    unique(tags.map((tag) => tag.toLowerCase())).map((label) => ({ label })),
+    { upsert: true, onConflict: "label" }
+  );
+  return data;
+}
 
 export default async (req, res) => {
   const { user, error } = await getUser(req);
@@ -68,14 +77,35 @@ export default async (req, res) => {
       if (updateRes.error) {
         return res.status(500).end(updateRes.error.message);
       }
+      const removedTags = await getTags(req.body.removedTags);
+      if (removedTags?.length > 0) {
+        await supabase
+          .from("route_tags")
+          .delete()
+          .eq("route_id", routeId)
+          .in(
+            "tag_id",
+            removedTags.map((tag) => tag.id)
+          );
+      }
+
+      const addedTags = await getTags(req.body.addedTags);
+      if (addedTags?.length > 0) {
+        await supabase
+          .from("route_tags")
+          .insert(
+            addedTags.map((tag) => ({ route_id: routeId, tag_id: tag.id }))
+          );
+      }
 
       return res.status(200).json(updateRes.data[0]);
     }
   } else {
     // Create new route
+    const newRouteId = uuidv4();
     const insertRes = await supabase.from("routes").insert([
       {
-        id: uuidv4(),
+        id: newRouteId,
         setter_id: user.id,
         ...value,
       },
@@ -83,6 +113,10 @@ export default async (req, res) => {
     if (insertRes.error) {
       return res.status(500).end(insertRes.error.message);
     }
+    const tags = await getTags(req.body.tags);
+    await supabase
+      .from("route_tags")
+      .insert(tags.map((tag) => ({ route_id: newRouteId, tag_id: tag.id })));
 
     return res.status(200).json(insertRes.data[0]);
   }

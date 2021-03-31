@@ -17,7 +17,7 @@ export default class PagedResource extends ObservableResource {
 
   async fetchNextPage() {
     const { data, hasNext } = await this.createPromise(
-      this.data.length,
+      this.data?.length ?? 0,
       this.limit
     );
     this.hasNext = hasNext;
@@ -25,7 +25,10 @@ export default class PagedResource extends ObservableResource {
   }
 
   async refresh() {
-    const { data, hasNext } = await this.createPromise(0, this.data.length);
+    const { data, hasNext } = await this.createPromise(
+      0,
+      this.data?.length ?? 0
+    );
 
     this.hasNext = hasNext;
     this.onNext(data);

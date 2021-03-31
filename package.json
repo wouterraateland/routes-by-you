@@ -20,6 +20,7 @@
     "react-dom": "17.0.1",
     "react-error-boundary": "^3.1.0",
     "react-mapbox-gl": "^5.1.1",
+    "react-select": "^4.3.0",
     "react-use-form-state": "^0.13.2",
     "uuid": "^8.3.2"
   },

@@ -13,6 +13,7 @@ import Loader from "components/ui/Loader";
 import Textarea from "components/ui/Textarea";
 
 import GradeInput from "components/routes/GradeInput";
+import TagsInput from "components/routes/TagsInput";
 import LocationField from "./LocationField";
 import MapInput from "./MapInput";
 
@@ -62,6 +63,12 @@ export default function RouteSettingInfoInput({ route, setRoute }) {
               description: event.target.value,
             }))
           }
+        />
+      </Field>
+      <Field label="Tags">
+        <TagsInput
+          value={route.tags}
+          onChange={(tags) => setRoute((route) => ({ ...route, tags }))}
         />
       </Field>
       <Field label="Grade">

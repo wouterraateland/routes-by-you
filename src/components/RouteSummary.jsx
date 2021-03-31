@@ -192,24 +192,41 @@ export default function RouteSummary({ route, focused }) {
         </Link>
       )}
 
-      {route.description &&
-        (route.description.length > DESCRIPTION_PREVIEW_LENGTH ? (
-          <p className="py-2">
-            {expanded
-              ? route.description
-              : `${route.description.slice(0, DESCRIPTION_PREVIEW_LENGTH)}... `}
-            {!expanded && (
-              <Button
-                className="text-gray-500"
-                onClick={() => setExpanded(true)}
+      <div className="py-2">
+        {route.description &&
+          (route.description.length > DESCRIPTION_PREVIEW_LENGTH ? (
+            <p>
+              {expanded
+                ? route.description
+                : `${route.description.slice(
+                    0,
+                    DESCRIPTION_PREVIEW_LENGTH
+                  )}... `}
+              {!expanded && (
+                <Button
+                  className="text-gray-500"
+                  onClick={() => setExpanded(true)}
+                >
+                  More
+                </Button>
+              )}
+            </p>
+          ) : (
+            <p>{route.description}</p>
+          ))}
+        {route.route_tags && (
+          <div className="flex flex-wrap space-x-2">
+            {route.route_tags.map((tag) => (
+              <span
+                key={tag.tag.id}
+                className="text-blue-500 text-sm uppercase font-bold"
               >
-                More
-              </Button>
-            )}
-          </p>
-        ) : (
-          <p className="py-2">{route.description}</p>
-        ))}
+                #{tag.tag.label}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
       <p className="text-xs text-gray-400 uppercase">
         {formatDistanceToNow(new Date(route.created_at))} ago
       </p>

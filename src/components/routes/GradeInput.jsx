@@ -5,6 +5,7 @@ function GradeMarker({ points, onClick }, ref) {
   return (
     <button
       ref={ref}
+      tabIndex={-1}
       type="button"
       className="flex items-center justify-center flex-shrink-0 w-12 h-12 rounded-full snap-align-center font-bold focus:outline-none"
       style={{ backgroundColor: pointsToHsl(points) }}
@@ -72,6 +73,7 @@ export default function GradeInput({ value, onChange }) {
       <div
         ref={containerRef}
         className="relative flex items-center space-x-4 overflow-x-auto overflow-y-hidden disable-scrollbars snap-x-mandatory"
+        tabIndex={0}
       >
         <div className="w-1/2 h-px flex-shrink-0" />
         <ForwardedGradeMarker
