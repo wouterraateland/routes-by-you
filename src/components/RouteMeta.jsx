@@ -39,19 +39,21 @@ export default function RouteMeta({ route }) {
               </Link>
             </p>
             {route.location ? (
-              <p className="text-sm text-blue-600 hover:underline">
+              <p className="text-sm text-blue-600 hover:underline truncate">
                 <Link href={`/location/${route.location.id}`}>
                   <a>{route.location.name}</a>
                 </Link>
               </p>
             ) : (
               route.location_string && (
-                <p className="text-sm text-gray-500">{route.location_string}</p>
+                <p className="text-sm text-gray-500 truncate">
+                  {route.location_string}
+                </p>
               )
             )}
           </>
         ) : (
-          <p className="font-bold">
+          <p className="font-bold truncate">
             {route.location ? (
               <Link href={`/location/${route.location.id}`}>
                 <a>{route.location.name}</a>

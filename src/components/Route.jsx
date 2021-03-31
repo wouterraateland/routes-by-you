@@ -17,7 +17,7 @@ export default function Route({ route }) {
     <div className="pb-4 sm:pb-0 sm:rounded-md sm:shadow-md bg-white">
       <div className="divide-y">
         <div className="flex items-center justify-between p-2">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 min-w-0">
             <RouteMeta route={route} />
           </div>
           <p
