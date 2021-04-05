@@ -38,7 +38,7 @@ export default function RouteList({
     )
     .slice(0, maxLength);
   return (
-    <div className="divide-y sm:space-y-2 sm:divide-y-0 border-t border-b sm:border-0">
+    <div className="divide-y sm:space-y-4 sm:divide-y-0 border-t border-b sm:border-0">
       {visibleRoutes.length === 0 && !routesResource.hasNext && (
         <p className="text-center text-gray-500">No routes found</p>
       )}
