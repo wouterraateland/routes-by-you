@@ -35,6 +35,11 @@ module.exports = {
         destination: "/location/:locationId/active",
         permanent: true,
       },
+      {
+        source: "/collection/:collectionId",
+        destination: "/collection/:collectionId/list",
+        permanent: true,
+      },
     ];
   },
   basePath,

@@ -15,6 +15,7 @@ import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import Card from "components/ui/Card";
 import Route from "components/Route";
+import Tabs from "components/ui/Tabs";
 
 export default function CollectionPage({ collection, auth }) {
   const [bookmarked, setBookmarked] = useState(
@@ -113,11 +114,30 @@ export default function CollectionPage({ collection, auth }) {
             </Card>
           </div>
         )}
-        <div className="divide-y sm:space-y-2 sm:divide-y-0 border-t border-b sm:border-0">
-          {collection.routes.map((route) => (
-            <Route key={route.id} route={route} />
-          ))}
-        </div>
+        <Tabs.Container>
+          <Tabs.Tab
+            label="List"
+            href={`/collection/${collection.id}/list`}
+            shallow
+            scroll={false}
+            replace
+          />
+          <Tabs.Tab
+            label="Map"
+            href={`/collection/${collection.id}/map`}
+            shallow
+            scroll={false}
+            replace
+          />
+        </Tabs.Container>
+        {Router.query.tab === "list" && (
+          <div className="divide-y sm:space-y-2 sm:divide-y-0 border-t border-b sm:border-0">
+            {collection.routes.map((route) => (
+              <Route key={route.id} route={route} />
+            ))}
+          </div>
+        )}
+        {Router.query.tab === "map" && <div>Map...</div>}
       </div>
     </div>
   );
