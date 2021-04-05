@@ -1,4 +1,4 @@
-import { Router } from "next/router";
+import Router from "next/router";
 
 import { api } from "utils/api";
 import { supabase } from "utils/supabase";
@@ -14,14 +14,16 @@ import Repeat from "components/icons/Repeat";
 import Avatar from "components/ui/Avatar";
 import Button from "components/ui/Button";
 import Card from "components/ui/Card";
-import RouteList from "components/RouteList";
+import Route from "components/Route";
 
 export default function CollectionPage({ collection, auth }) {
   const [bookmarked, setBookmarked] = useState(
     collection.bookmarks.some((bookmark) => bookmark.user_id === auth.user.id)
   );
-  const routesTopped = 1;
-  const allTopped = routesTopped >= collection.collection_routes.length;
+  const routesTopped = collection.routes.filter((route) =>
+    route.repeats.some((repeat) => repeat.user_id === auth.user.id)
+  ).length;
+  const allTopped = routesTopped >= collection.routes.length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,7 +88,7 @@ export default function CollectionPage({ collection, auth }) {
             </Button>
           </div>
         </div>
-        {collection.collection_routes.length > 0 && (
+        {collection.routes.length > 0 && (
           <div className="flex justify-center">
             <Card
               elevation="md"
@@ -105,13 +107,17 @@ export default function CollectionPage({ collection, auth }) {
               <p className="font-bold">
                 {allTopped
                   ? "All"
-                  : `${routesTopped} / ${collection.collection_routes.length}`}{" "}
+                  : `${routesTopped} / ${collection.routes.length}`}{" "}
                 routes topped
               </p>
             </Card>
           </div>
         )}
-        <RouteList filters={{ collectionId: collection.id }} />
+        <div className="divide-y sm:space-y-2 sm:divide-y-0 border-t border-b sm:border-0">
+          {collection.routes.map((route) => (
+            <Route key={route.id} route={route} />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -124,7 +130,7 @@ CollectionPage.authPolicy = {
 export async function getServerSideProps({ params }) {
   const { collectionId } = params;
 
-  const { data, error } = await supabase
+  const collectionRes = await supabase
     .from("collections")
     .select(
       `
@@ -136,10 +142,46 @@ export async function getServerSideProps({ params }) {
     )
     .eq("id", collectionId)
     .single();
-  if (error) {
-    console.error(error);
+
+  if (collectionRes.error) {
+    console.error(collectionRes.error);
     return { notFound: true };
   }
 
-  return { props: { collection: data } };
+  const routesRes = await supabase
+    .from("routes")
+    .select(
+      `
+      *,
+      route_tags: route_tags!route_id (
+        tag: tags (*)
+      ),
+      setter: setter_id (*),
+      repeats: repeats!route_id (*),
+      location: location_id (*),
+      comments: route_comments (
+        *,
+        user: user_id (*)
+      ),
+      reports: route_reports (*)
+      `
+    )
+    .in(
+      "id",
+      collectionRes.data.collection_routes.map(({ route_id }) => route_id)
+    );
+
+  if (routesRes.error) {
+    console.error(routesRes.error);
+    return { notFound: true };
+  }
+
+  return {
+    props: {
+      collection: {
+        ...collectionRes.data,
+        routes: routesRes.data,
+      },
+    },
+  };
 }
